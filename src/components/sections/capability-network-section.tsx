@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -219,6 +220,31 @@ const capabilityClusters: CapabilityCluster[] = [
   },
 ];
 
+const NETWORK_WIDTH =
+  1000;
+
+const NETWORK_HEIGHT =
+  780;
+
+function getNetworkPoint(
+  cluster: CapabilityCluster
+) {
+  return {
+    x:
+      parseFloat(
+        cluster.position.left
+      ) /
+      100 *
+      NETWORK_WIDTH,
+    y:
+      parseFloat(
+        cluster.position.top
+      ) /
+      100 *
+      NETWORK_HEIGHT,
+  };
+}
+
 function getCluster(
   id: ClusterKey
 ): CapabilityCluster {
@@ -264,6 +290,59 @@ export default function CapabilityNetworkSection() {
         activeData,
       ]
     );
+
+  const activePoint =
+    useMemo(
+      () =>
+        getNetworkPoint(
+          activeData
+        ),
+      [
+        activeData,
+      ]
+    );
+
+  const activeRoutes =
+    useMemo(
+      () =>
+        activeData.connections.map(
+          (
+            connection
+          ) => ({
+            id:
+              connection,
+            point:
+              getNetworkPoint(
+                getCluster(
+                  connection
+                )
+              ),
+          })
+        ),
+      [
+        activeData,
+      ]
+    );
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:capability-cluster-change",
+        {
+          detail: {
+            id:
+              activeData.id,
+            number:
+              activeData.number,
+            title:
+              activeData.title,
+          },
+        }
+      )
+    );
+  }, [
+    activeData,
+  ]);
 
   useLayoutEffect(() => {
     const section =
@@ -449,6 +528,11 @@ export default function CapabilityNetworkSection() {
                 activeCluster ===
                 cluster.id;
 
+              const related =
+                relatedClusters.has(
+                  cluster.id
+                );
+
               return (
                 <button
                   key={cluster.id}
@@ -479,12 +563,19 @@ export default function CapabilityNetworkSection() {
                           bg-cyan-300/[0.075]
                           shadow-[0_0_40px_rgba(72,215,255,0.07)]
                         `
-                        : `
-                          border-white/[0.11]
-                          bg-[#0d141b]
-                          hover:border-cyan-300/25
-                          hover:bg-[#101920]
-                        `
+                        : related
+                          ? `
+                            border-cyan-200/[0.16]
+                            bg-[#0e151c]
+                            hover:border-cyan-300/25
+                            hover:bg-[#101920]
+                          `
+                          : `
+                            border-white/[0.11]
+                            bg-[#0d141b]
+                            hover:border-cyan-300/25
+                            hover:bg-[#101920]
+                          `
                     }
                   `}
                 >
@@ -696,30 +787,91 @@ export default function CapabilityNetworkSection() {
             viewBox="0 0 1000 780"
             preserveAspectRatio="none"
           >
-            {[
-              [500, 390, 500, 100],
-              [500, 390, 170, 250],
-              [500, 390, 830, 250],
-              [500, 390, 500, 640],
-              [500, 390, 200, 530],
-              [500, 390, 800, 530],
-            ].map(
+            {capabilityClusters.map(
               (
-                line,
-                index
+                cluster
+              ) => {
+                const point =
+                  getNetworkPoint(
+                    cluster
+                  );
+
+                return (
+                  <line
+                    key={
+                      `base-${cluster.id}`
+                    }
+                    x1={500}
+                    y1={390}
+                    x2={point.x}
+                    y2={point.y}
+                    stroke="#48d7ff"
+                    strokeOpacity="0.10"
+                    strokeWidth="1"
+                  />
+                );
+              }
+            )}
+
+            {activeRoutes.map(
+              (
+                route
               ) => (
-                <line
-                  key={index}
-                  x1={line[0]}
-                  y1={line[1]}
-                  x2={line[2]}
-                  y2={line[3]}
-                  stroke="#48d7ff"
-                  strokeOpacity="0.28"
-                  strokeWidth="1"
-                />
+                <g
+                  key={
+                    `active-${route.id}`
+                  }
+                >
+                  <line
+                    x1={
+                      activePoint.x
+                    }
+                    y1={
+                      activePoint.y
+                    }
+                    x2={
+                      route.point.x
+                    }
+                    y2={
+                      route.point.y
+                    }
+                    stroke="#48d7ff"
+                    strokeOpacity="0.12"
+                    strokeWidth="7"
+                  />
+
+                  <line
+                    x1={
+                      activePoint.x
+                    }
+                    y1={
+                      activePoint.y
+                    }
+                    x2={
+                      route.point.x
+                    }
+                    y2={
+                      route.point.y
+                    }
+                    stroke="#7be5ff"
+                    strokeOpacity="0.62"
+                    strokeWidth="1.25"
+                  />
+                </g>
               )
             )}
+
+            <circle
+              cx={
+                activePoint.x
+              }
+              cy={
+                activePoint.y
+              }
+              r="5"
+              fill="#7be5ff"
+              fillOpacity="0.9"
+            />
           </svg>
 
           <div
@@ -848,24 +1000,29 @@ export default function CapabilityNetworkSection() {
                     py-4
                     text-left
                     backdrop-blur-xl
-                    transition
-                    duration-300
+                    transition-[transform,border-color,background-color,box-shadow,opacity]
+                    duration-500
+                    ease-out
 
                     ${
                       active
                         ? `
+                          scale-[1.025]
                           border-cyan-300/45
                           bg-cyan-300/[0.10]
-                          shadow-[0_0_45px_rgba(72,215,255,0.10)]
+                          opacity-100
+                          shadow-[0_18px_50px_rgba(0,0,0,0.30),0_0_45px_rgba(72,215,255,0.10)]
                         `
                         : related
                           ? `
-                            border-white/[0.15]
+                            border-cyan-200/[0.16]
                             bg-[#0e151c]/95
+                            opacity-90
                           `
                           : `
                             border-white/[0.10]
                             bg-[#0c1218]/95
+                            opacity-70
                           `
                     }
                   `}
@@ -874,6 +1031,12 @@ export default function CapabilityNetworkSection() {
                       cluster.position.left,
                     top:
                       cluster.position.top,
+                    zIndex:
+                      active
+                        ? 36
+                        : related
+                          ? 32
+                          : 28,
                   }}
                 >
                   <div

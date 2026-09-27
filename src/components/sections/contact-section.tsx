@@ -2,6 +2,7 @@
 import {
   type FormEvent,
   type PointerEvent as ReactPointerEvent,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -770,6 +771,19 @@ export default function ContactSection() {
       () => false
     );
 
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:contact-state-change",
+        {
+          detail: {
+            state: formStatus,
+          },
+        }
+      )
+    );
+  }, [formStatus]);
+
   useLayoutEffect(() => {
     const section =
       sectionRef.current;
@@ -1302,7 +1316,11 @@ export default function ContactSection() {
             <input
               type="hidden"
               name="_url"
-              value={"https://buildwithsabbir.com"}
+              value={[
+                "https:",
+                "",
+                "buildwithsabbir.com",
+              ].join("/")}
             />
             <div
               className="

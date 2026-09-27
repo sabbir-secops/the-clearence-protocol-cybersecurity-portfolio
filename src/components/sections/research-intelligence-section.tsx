@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -234,6 +235,35 @@ export default function ResearchIntelligenceSection() {
         ),
       [activeNode]
     );
+
+  useEffect(() => {
+    const index =
+      researchNodes.findIndex(
+        (node) =>
+          node.id ===
+          activeData.id
+      );
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:research-node-change",
+        {
+          detail: {
+            id: activeData.id,
+            number:
+              activeData.number,
+            name:
+              activeData.name,
+            status:
+              activeData.status,
+            index,
+          },
+        }
+      )
+    );
+  }, [
+    activeData,
+  ]);
 
   useLayoutEffect(() => {
     const section =
@@ -542,11 +572,6 @@ export default function ResearchIntelligenceSection() {
                     aria-pressed={
                       active
                     }
-                    onMouseEnter={() =>
-                      setActiveNode(
-                        node.id
-                      )
-                    }
                     onFocus={() =>
                       setActiveNode(
                         node.id
@@ -574,9 +599,10 @@ export default function ResearchIntelligenceSection() {
                       ${
                         active
                           ? `
-                            border-cyan-300/40
-                            bg-cyan-300/[0.075]
-                            shadow-[0_0_40px_rgba(72,215,255,0.07)]
+                            scale-[1.015]
+                            border-violet-300/45
+                            bg-violet-300/[0.075]
+                            shadow-[0_16px_44px_rgba(0,0,0,0.24),0_0_42px_rgba(120,109,255,0.09)]
                           `
                           : `
                             border-white/[0.11]
@@ -635,8 +661,8 @@ export default function ResearchIntelligenceSection() {
                             ${
                               active
                                 ? `
-                                  bg-cyan-300
-                                  shadow-[0_0_18px_rgba(72,215,255,0.85)]
+                                  bg-violet-300
+                                  shadow-[0_0_18px_rgba(120,109,255,0.82)]
                                 `
                                 : `
                                   bg-white/40
@@ -861,7 +887,7 @@ export default function ResearchIntelligenceSection() {
                       text-[12px]
                       font-semibold
                       tracking-[0.11em]
-                      text-cyan-200
+                      text-violet-200
                       uppercase
                     "
                   >

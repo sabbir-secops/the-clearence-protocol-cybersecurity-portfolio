@@ -11,6 +11,7 @@ import AccessibilityController from "@/components/system/accessibility-controlle
 import CinematicSequence from "@/components/system/cinematic-sequence";
 import GlobalTerminal from "@/components/system/global-terminal";
 import PerformanceController from "@/components/system/performance-controller";
+import PersistentSystemCore from "@/components/system/persistent-system-core";
 import ResponsiveQa from "@/components/system/responsive-qa";
 import SectionTransitionLayer from "@/components/system/section-transition-layer";
 import SoundSystem from "@/components/system/sound-system";
@@ -138,6 +139,12 @@ export default function HomeExperience() {
       />
 
       <SystemEnvironment
+        enabled={
+          systemEntered
+        }
+      />
+
+      <PersistentSystemCore
         enabled={
           systemEntered
         }

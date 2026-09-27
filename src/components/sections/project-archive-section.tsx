@@ -243,6 +243,28 @@ export default function ProjectArchiveSection() {
     );
 
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:archive-project-change",
+        {
+          detail: {
+            id: activeData.id,
+            code: activeData.code,
+            name: activeData.name,
+            type: activeData.type,
+            status: activeData.status,
+            classified:
+              activeData.classified ===
+              true,
+          },
+        }
+      )
+    );
+  }, [
+    activeData,
+  ]);
+
+  useEffect(() => {
     return () => {
       timeoutRefs.current.forEach(
         (timeout) => {
@@ -676,11 +698,6 @@ export default function ProjectArchiveSection() {
                       aria-pressed={
                         active
                       }
-                      onMouseEnter={() =>
-                        selectProject(
-                          project.id
-                        )
-                      }
                       onFocus={() =>
                         selectProject(
                           project.id
@@ -711,9 +728,10 @@ export default function ProjectArchiveSection() {
                           restricted
                             ? active
                               ? `
+                                scale-[1.012]
                                 border-amber-300/45
                                 bg-amber-300/[0.075]
-                                shadow-[0_0_45px_rgba(255,184,77,0.07)]
+                                shadow-[0_18px_48px_rgba(0,0,0,0.24),0_0_45px_rgba(255,184,77,0.07)]
                               `
                               : `
                                 border-amber-300/20
@@ -724,9 +742,10 @@ export default function ProjectArchiveSection() {
                               `
                             : active
                               ? `
+                                scale-[1.012]
                                 border-cyan-300/40
                                 bg-cyan-300/[0.075]
-                                shadow-[0_0_45px_rgba(72,215,255,0.07)]
+                                shadow-[0_18px_48px_rgba(0,0,0,0.24),0_0_45px_rgba(72,215,255,0.07)]
                               `
                               : `
                                 border-white/[0.11]

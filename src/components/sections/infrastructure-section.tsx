@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -222,6 +223,52 @@ export default function InfrastructureSection() {
     () => getLayer(activeLayer),
     [activeLayer]
   );
+
+  const activeLayerIndex =
+    useMemo(
+      () =>
+        infrastructureLayers.findIndex(
+          (layer) =>
+            layer.id === activeLayer
+        ),
+      [activeLayer]
+    );
+
+  const routeProgress =
+    useMemo(
+      () =>
+        infrastructureLayers.length > 1
+          ? Math.max(
+              0,
+              activeLayerIndex
+            ) /
+            (
+              infrastructureLayers.length -
+              1
+            )
+          : 0,
+      [activeLayerIndex]
+    );
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:infrastructure-layer-change",
+        {
+          detail: {
+            id: activeData.id,
+            number: activeData.number,
+            name: activeData.name,
+            status: activeData.status,
+            index: activeLayerIndex,
+          },
+        }
+      )
+    );
+  }, [
+    activeData,
+    activeLayerIndex,
+  ]);
 
   useLayoutEffect(() => {
     const section =
@@ -698,9 +745,9 @@ export default function InfrastructureSection() {
                 h-px
                 -translate-y-1/2
                 bg-gradient-to-r
-                from-cyan-300/10
-                via-cyan-300/50
-                to-cyan-300/10
+                from-cyan-300/[0.08]
+                via-cyan-300/20
+                to-cyan-300/[0.08]
               "
             />
 
@@ -711,13 +758,23 @@ export default function InfrastructureSection() {
                 left-[6%]
                 top-1/2
                 h-[3px]
-                w-[10%]
                 -translate-y-1/2
-                animate-pulse
                 rounded-full
-                bg-cyan-300
-                shadow-[0_0_25px_rgba(72,215,255,0.7)]
+                bg-cyan-300/80
+                shadow-[0_0_24px_rgba(72,215,255,0.45)]
+                transition-[width,opacity]
+                duration-500
+                ease-out
               "
+              style={{
+                width: `${
+                  routeProgress * 88
+                }%`,
+                opacity:
+                  activeLayerIndex === 0
+                    ? 0.45
+                    : 0.9,
+              }}
             />
 
             <div
@@ -732,21 +789,23 @@ export default function InfrastructureSection() {
               "
             >
               {infrastructureLayers.map(
-                (layer) => {
+                (
+                  layer,
+                  index
+                ) => {
                   const active =
                     activeLayer ===
                     layer.id;
+
+                  const passed =
+                    index <
+                    activeLayerIndex;
 
                   return (
                     <button
                       key={layer.id}
                       type="button"
                       aria-pressed={active}
-                      onMouseEnter={() =>
-                        setActiveLayer(
-                          layer.id
-                        )
-                      }
                       onFocus={() =>
                         setActiveLayer(
                           layer.id
@@ -757,7 +816,7 @@ export default function InfrastructureSection() {
                           layer.id
                         )
                       }
-                      className="
+                      className={`
                         infrastructure-node
                         group
                         relative
@@ -766,7 +825,28 @@ export default function InfrastructureSection() {
                         flex-col
                         items-center
                         text-center
-                      "
+                        transition-[transform,opacity]
+                        duration-500
+                        ease-out
+
+                        ${
+                          active
+                            ? `
+                                z-20
+                                scale-[1.035]
+                                opacity-100
+                              `
+                            : passed
+                              ? `
+                                  z-10
+                                  opacity-90
+                                `
+                              : `
+                                  opacity-65
+                                  hover:opacity-90
+                                `
+                        }
+                      `}
                     >
                       <span
                         className="
@@ -801,11 +881,16 @@ export default function InfrastructureSection() {
                                 bg-cyan-300/[0.10]
                                 shadow-[0_0_55px_rgba(72,215,255,0.12)]
                               `
-                              : `
-                                border-white/[0.14]
-                                bg-[#0d141b]
-                                group-hover:border-cyan-300/30
-                              `
+                              : passed
+                                ? `
+                                    border-cyan-200/[0.18]
+                                    bg-cyan-300/[0.035]
+                                  `
+                                : `
+                                    border-white/[0.10]
+                                    bg-[#0d141b]
+                                    group-hover:border-cyan-300/30
+                                  `
                           }
                         `}
                       >
@@ -821,9 +906,13 @@ export default function InfrastructureSection() {
                                 ? `
                                   border-cyan-300/20
                                 `
-                                : `
-                                  border-white/[0.06]
-                                `
+                                : passed
+                                  ? `
+                                      border-cyan-200/[0.10]
+                                    `
+                                  : `
+                                      border-white/[0.05]
+                                    `
                             }
                           `}
                         />
@@ -841,9 +930,13 @@ export default function InfrastructureSection() {
                                   bg-cyan-300
                                   shadow-[0_0_24px_rgba(72,215,255,0.9)]
                                 `
-                                : `
-                                  bg-white/35
-                                `
+                                : passed
+                                  ? `
+                                      bg-cyan-200/60
+                                    `
+                                  : `
+                                      bg-white/25
+                                    `
                             }
                           `}
                         />

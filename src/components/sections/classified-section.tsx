@@ -106,6 +106,26 @@ export default function ClassifiedSection() {
     accessState,
   ]);
 
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:classified-state-change",
+        {
+          detail: {
+            state: accessState,
+            recovered:
+              revealedSignals.length,
+            total:
+              signalFragments.length,
+          },
+        }
+      )
+    );
+  }, [
+    accessState,
+    revealedSignals.length,
+  ]);
+
   useLayoutEffect(() => {
     const section =
       sectionRef.current;
@@ -644,7 +664,7 @@ export default function ClassifiedSection() {
                 />
 
                 <div
-                  className="
+                  className={`
                     relative
                     z-10
                     flex
@@ -654,12 +674,35 @@ export default function ClassifiedSection() {
                     justify-center
                     rounded-full
                     border
-                    border-amber-300/30
-                    bg-amber-300/[0.045]
-                    shadow-[0_0_100px_rgba(255,184,77,0.10)]
+                    transition-[border-color,background-color,box-shadow,transform]
+                    duration-500
                     sm:h-[175px]
                     sm:w-[175px]
-                  "
+
+                    ${
+                      accessState ===
+                      "scanning"
+                        ? `
+                            scale-[1.025]
+                            border-amber-300/50
+                            bg-amber-300/[0.07]
+                            shadow-[0_0_120px_rgba(255,184,77,0.14)]
+                          `
+                        : accessState ===
+                            "denied"
+                          ? `
+                              scale-[1.015]
+                              border-amber-300/55
+                              bg-amber-300/[0.08]
+                              shadow-[0_0_130px_rgba(255,184,77,0.16)]
+                            `
+                          : `
+                              border-amber-300/30
+                              bg-amber-300/[0.045]
+                              shadow-[0_0_100px_rgba(255,184,77,0.10)]
+                            `
+                    }
+                  `}
                 >
                   <div
                     className="

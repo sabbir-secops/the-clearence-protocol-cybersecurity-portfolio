@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -206,6 +207,28 @@ export default function SecurityDomainSection() {
         ),
       [activeLayer]
     );
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:security-layer-change",
+        {
+          detail: {
+            id:
+              activeData.id,
+            number:
+              activeData.number,
+            name:
+              activeData.name,
+            status:
+              activeData.status,
+          },
+        }
+      )
+    );
+  }, [
+    activeData,
+  ]);
 
   useLayoutEffect(() => {
     const section =
@@ -770,17 +793,56 @@ export default function SecurityDomainSection() {
                       position.top
                     ) * 7.8;
 
+                  const active =
+                    activeLayer ===
+                      layer.id;
+
                   return (
-                    <line
+                    <g
                       key={layer.id}
-                      x1="500"
-                      y1="390"
-                      x2={x}
-                      y2={y}
-                      stroke="#48d7ff"
-                      strokeOpacity="0.28"
-                      strokeWidth="1"
-                    />
+                    >
+                      <line
+                        x1="500"
+                        y1="390"
+                        x2={x}
+                        y2={y}
+                        stroke="#48d7ff"
+                        strokeOpacity="0.10"
+                        strokeWidth="1"
+                      />
+
+                      {active && (
+                        <>
+                          <line
+                            x1="500"
+                            y1="390"
+                            x2={x}
+                            y2={y}
+                            stroke="#48d7ff"
+                            strokeOpacity="0.12"
+                            strokeWidth="8"
+                          />
+
+                          <line
+                            x1="500"
+                            y1="390"
+                            x2={x}
+                            y2={y}
+                            stroke="#7be5ff"
+                            strokeOpacity="0.70"
+                            strokeWidth="1.35"
+                          />
+
+                          <circle
+                            cx={x}
+                            cy={y}
+                            r="5"
+                            fill="#7be5ff"
+                            fillOpacity="0.92"
+                          />
+                        </>
+                      )}
+                    </g>
                   );
                 }
               )}
@@ -924,21 +986,26 @@ export default function SecurityDomainSection() {
                       p-5
                       text-left
                       backdrop-blur-xl
-                      transition
-                      duration-300
+                      transition-[transform,border-color,background-color,box-shadow,opacity]
+                      duration-500
+                      ease-out
 
                       ${
                         active
                           ? `
+                            scale-[1.025]
                             border-cyan-300/45
                             bg-cyan-300/[0.09]
-                            shadow-[0_0_50px_rgba(72,215,255,0.09)]
+                            opacity-100
+                            shadow-[0_18px_52px_rgba(0,0,0,0.30),0_0_52px_rgba(72,215,255,0.10)]
                           `
                           : `
-                            border-white/[0.13]
+                            border-white/[0.11]
                             bg-[#0d141b]/95
+                            opacity-72
                             hover:border-cyan-300/30
                             hover:bg-[#101920]
+                            hover:opacity-100
                           `
                       }
                     `}
@@ -947,6 +1014,10 @@ export default function SecurityDomainSection() {
                         position.left,
                       top:
                         position.top,
+                      zIndex:
+                        active
+                          ? 36
+                          : 28,
                     }}
                   >
                     <div

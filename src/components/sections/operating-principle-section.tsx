@@ -3,6 +3,7 @@
 import {
   useLayoutEffect,
   useRef,
+  useState,
 } from "react";
 
 import { gsap } from "gsap";
@@ -85,12 +86,35 @@ const stages = [
   },
 ];
 
+const LAST_STAGE_INDEX =
+  stages.length - 1;
+
+function clampStage(
+  value: number
+) {
+  return Math.min(
+    Math.max(
+      value,
+      0
+    ),
+    LAST_STAGE_INDEX
+  );
+}
+
 export default function OperatingPrincipleSection() {
   const sectionRef =
     useRef<HTMLElement | null>(null);
 
   const progressRef =
     useRef<HTMLDivElement | null>(null);
+
+  const activeStageRef =
+    useRef(0);
+
+  const [
+    activeStage,
+    setActiveStage,
+  ] = useState(0);
 
   useLayoutEffect(() => {
     const section =
@@ -105,7 +129,50 @@ export default function OperatingPrincipleSection() {
         "(prefers-reduced-motion: reduce)"
       ).matches;
 
+    const dispatchStage =
+      (
+        index: number,
+        progress: number
+      ) => {
+        const nextIndex =
+          clampStage(index);
+
+        if (
+          activeStageRef.current !==
+          nextIndex
+        ) {
+          activeStageRef.current =
+            nextIndex;
+
+          setActiveStage(
+            nextIndex
+          );
+        }
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "system:logic-stage-change",
+            {
+              detail: {
+                index:
+                  nextIndex,
+                name:
+                  stages[
+                    nextIndex
+                  ].name,
+                progress,
+              },
+            }
+          )
+        );
+      };
+
     if (reduceMotion) {
+      dispatchStage(
+        0,
+        0
+      );
+
       return;
     }
 
@@ -165,6 +232,45 @@ export default function OperatingPrincipleSection() {
             }
           );
         }
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 62%",
+          end: "bottom 38%",
+
+          onUpdate: (
+            self
+          ) => {
+            const index =
+              clampStage(
+                Math.floor(
+                  self.progress *
+                    stages.length
+                )
+              );
+
+            dispatchStage(
+              index,
+              self.progress
+            );
+          },
+
+          onEnter: () => {
+            dispatchStage(
+              activeStageRef.current,
+              activeStageRef.current /
+                LAST_STAGE_INDEX
+            );
+          },
+
+          onEnterBack: () => {
+            dispatchStage(
+              activeStageRef.current,
+              activeStageRef.current /
+                LAST_STAGE_INDEX
+            );
+          },
+        });
       }, section);
 
     return () => {
@@ -203,6 +309,23 @@ export default function OperatingPrincipleSection() {
           rounded-full
           bg-cyan-300/[0.035]
           blur-[150px]
+        "
+      />
+
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          inset-x-[8%]
+          top-[44%]
+          hidden
+          h-px
+          bg-gradient-to-r
+          from-transparent
+          via-cyan-300/[0.10]
+          to-transparent
+          xl:block
         "
       />
 
@@ -274,6 +397,43 @@ export default function OperatingPrincipleSection() {
               operated, optimized and
               continuously improved.
             </p>
+
+            <div
+              className="
+                mt-6
+                flex
+                items-center
+                gap-3
+                font-mono
+                text-[10px]
+                tracking-[0.11em]
+                text-cyan-200/70
+                uppercase
+                sm:text-[11px]
+              "
+            >
+              <span
+                aria-hidden="true"
+                className="
+                  h-1.5
+                  w-1.5
+                  rounded-full
+                  bg-cyan-300
+                  shadow-[0_0_14px_rgba(72,215,255,0.7)]
+                "
+              />
+
+              <span>
+                Lifecycle Signal |{" "}
+                {stages[
+                  activeStage
+                ].number}
+                {" | "}
+                {stages[
+                  activeStage
+                ].name}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -309,6 +469,58 @@ export default function OperatingPrincipleSection() {
               shadow-[0_0_20px_rgba(72,215,255,0.4)]
             "
           />
+
+          <div
+            className="
+              absolute
+              inset-x-0
+              top-0
+              grid
+              -translate-y-1/2
+              grid-cols-6
+            "
+          >
+            {stages.map(
+              (
+                stage,
+                index
+              ) => {
+                const active =
+                  index <=
+                  activeStage;
+
+                return (
+                  <div
+                    key={
+                      stage.name
+                    }
+                    className="
+                      flex
+                      justify-center
+                    "
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`
+                        h-2.5
+                        w-2.5
+                        rounded-full
+                        border
+                        transition-all
+                        duration-500
+
+                        ${
+                          active
+                            ? "border-cyan-200/70 bg-cyan-300 shadow-[0_0_18px_rgba(72,215,255,0.7)]"
+                            : "border-white/20 bg-[#0c1117]"
+                        }
+                      `}
+                    />
+                  </div>
+                );
+              }
+            )}
+          </div>
         </div>
 
         <div
@@ -323,160 +535,257 @@ export default function OperatingPrincipleSection() {
             sm:gap-4
             xl:grid-cols-3
             2xl:grid-cols-6
+            2xl:[perspective:1400px]
           "
         >
           {stages.map(
-            (stage) => (
-              <article
-                key={stage.name}
-                className="
-                  principle-stage
-                  group
-                  relative
-                  flex
-                  h-full
-                  min-w-0
-                  min-h-[300px]
-                  flex-col
-                  overflow-hidden
-                  rounded-[22px]
-                  border
-                  border-white/[0.11]
-                  bg-[#0c1117]
-                  p-5
-                  transition-[border-color,background-color,box-shadow]
-                  duration-300
-                  hover:border-cyan-300/30
-                  hover:bg-[#0d151c]
-                  hover:shadow-[0_0_40px_rgba(72,215,255,0.035)]
-                  sm:min-h-[325px]
-                  sm:p-6
-                  2xl:min-h-[390px]
-                  2xl:p-5
-                "
-              >
-                <div
-                  className="
-                    mb-9
+            (
+              stage,
+              index
+            ) => {
+              const isActive =
+                index ===
+                activeStage;
+
+              const isComplete =
+                index <
+                activeStage;
+
+              return (
+                <article
+                  key={stage.name}
+                  aria-current={
+                    isActive
+                      ? "step"
+                      : undefined
+                  }
+                  className={`
+                    principle-stage
+                    group
+                    relative
                     flex
-                    items-center
-                    justify-between
-                    gap-4
-                  "
+                    h-full
+                    min-w-0
+                    min-h-[300px]
+                    flex-col
+                    overflow-hidden
+                    rounded-[22px]
+                    border
+                    p-5
+                    transition-[transform,border-color,background-color,box-shadow,opacity]
+                    duration-500
+                    ease-out
+                    sm:min-h-[325px]
+                    sm:p-6
+                    2xl:min-h-[390px]
+                    2xl:p-5
+
+                    ${
+                      isActive
+                        ? "border-cyan-300/35 bg-[#0d151c] shadow-[0_20px_70px_rgba(0,0,0,0.28),0_0_42px_rgba(72,215,255,0.055)] 2xl:[transform:translate3d(0,-7px,22px)]"
+                        : isComplete
+                          ? "border-white/[0.12] bg-[#0c1218]"
+                          : "border-white/[0.10] bg-[#0c1117]"
+                    }
+                  `}
                 >
-                  <span
+                  <div
+                    aria-hidden="true"
+                    className={`
+                      pointer-events-none
+                      absolute
+                      inset-x-0
+                      top-0
+                      h-px
+                      transition-opacity
+                      duration-500
+
+                      ${
+                        isActive
+                          ? "bg-gradient-to-r from-transparent via-cyan-300/80 to-transparent opacity-100"
+                          : "bg-gradient-to-r from-transparent via-white/15 to-transparent opacity-45"
+                      }
+                    `}
+                  />
+
+                  <div
+                    aria-hidden="true"
+                    className={`
+                      pointer-events-none
+                      absolute
+                      -right-16
+                      -top-16
+                      h-40
+                      w-40
+                      rounded-full
+                      blur-[60px]
+                      transition-opacity
+                      duration-500
+
+                      ${
+                        isActive
+                          ? "bg-cyan-300/[0.08] opacity-100"
+                          : "bg-cyan-300/[0.03] opacity-0"
+                      }
+                    `}
+                  />
+
+                  <div
                     className="
-                      font-mono
-                      text-[10px]
-                      tracking-[0.13em]
-                      text-[#a8b4bd]
-                      uppercase
-                      sm:text-[11px]
+                      relative
+                      z-10
+                      mb-9
+                      flex
+                      items-center
+                      justify-between
+                      gap-4
                     "
                   >
-                    Stage {stage.number}
-                  </span>
+                    <span
+                      className={`
+                        font-mono
+                        text-[10px]
+                        tracking-[0.13em]
+                        uppercase
+                        transition-colors
+                        duration-500
+                        sm:text-[11px]
+
+                        ${
+                          isActive
+                            ? "text-cyan-200"
+                            : "text-[#a8b4bd]"
+                        }
+                      `}
+                    >
+                      Stage {stage.number}
+                    </span>
+
+                    <span
+                      aria-hidden="true"
+                      className={`
+                        h-2
+                        w-2
+                        shrink-0
+                        rounded-full
+                        transition-all
+                        duration-500
+
+                        ${
+                          isActive
+                            ? "bg-cyan-300 shadow-[0_0_18px_rgba(72,215,255,0.8)]"
+                            : isComplete
+                              ? "bg-cyan-200/55"
+                              : "bg-white/40"
+                        }
+                      `}
+                    />
+                  </div>
+
+                  <h3
+                    className="
+                      relative
+                      z-10
+                      break-words
+                      text-[27px]
+                      font-semibold
+                      leading-tight
+                      tracking-[-0.035em]
+                      text-[#eef5f8]
+                      uppercase
+                      sm:text-[30px]
+                      2xl:text-[25px]
+                    "
+                  >
+                    {stage.name}
+                  </h3>
+
+                  <p
+                    className="
+                      relative
+                      z-10
+                      mt-5
+                      text-[15px]
+                      leading-7
+                      text-[#a8b4bd]
+                      2xl:text-[14px]
+                      2xl:leading-6
+                    "
+                  >
+                    {stage.description}
+                  </p>
+
+                  <div
+                    className="
+                      relative
+                      z-10
+                      mt-auto
+                      flex
+                      min-w-0
+                      flex-wrap
+                      gap-2
+                      pt-7
+                    "
+                  >
+                    {stage.tags.map(
+                      (tag) => (
+                        <span
+                          key={tag}
+                          className={`
+                            max-w-full
+                            rounded-full
+                            border
+                            px-3
+                            py-1.5
+                            text-[10px]
+                            font-medium
+                            leading-5
+                            tracking-[0.09em]
+                            uppercase
+                            transition-colors
+                            duration-500
+
+                            ${
+                              isActive
+                                ? "border-cyan-200/20 bg-cyan-200/[0.04] text-[#d2dde3]"
+                                : "border-white/[0.13] bg-white/[0.035] text-[#c0c9cf]"
+                            }
+                          `}
+                        >
+                          {tag}
+                        </span>
+                      )
+                    )}
+                  </div>
 
                   <span
-                    className="
-                      h-2
-                      w-2
-                      shrink-0
-                      rounded-full
-                      bg-white/40
-                      transition
-                      duration-300
-                      group-hover:bg-cyan-300
-                      group-hover:shadow-[0_0_18px_rgba(72,215,255,0.8)]
-                    "
-                  />
-                </div>
+                    aria-hidden="true"
+                    className={`
+                      pointer-events-none
+                      absolute
+                      bottom-[-15px]
+                      right-3
+                      text-[74px]
+                      font-bold
+                      leading-none
+                      tracking-[-0.08em]
+                      transition-colors
+                      duration-500
+                      sm:text-[86px]
+                      2xl:text-[72px]
 
-                <h3
-                  className="
-                    break-words
-                    text-[27px]
-                    font-semibold
-                    leading-tight
-                    tracking-[-0.035em]
-                    text-[#eef5f8]
-                    uppercase
-                    sm:text-[30px]
-                    2xl:text-[25px]
-                  "
-                >
-                  {stage.name}
-                </h3>
-
-                <p
-                  className="
-                    mt-5
-                    text-[15px]
-                    leading-7
-                    text-[#a8b4bd]
-                    2xl:text-[14px]
-                    2xl:leading-6
-                  "
-                >
-                  {stage.description}
-                </p>
-
-                <div
-                  className="
-                    mt-auto
-                    flex
-                    min-w-0
-                    flex-wrap
-                    gap-2
-                    pt-7
-                  "
-                >
-                  {stage.tags.map(
-                    (tag) => (
-                      <span
-                        key={tag}
-                        className="
-                          max-w-full
-                          rounded-full
-                          border
-                          border-white/[0.13]
-                          bg-white/[0.035]
-                          px-3
-                          py-1.5
-                          text-[10px]
-                          font-medium
-                          leading-5
-                          tracking-[0.09em]
-                          text-[#c0c9cf]
-                          uppercase
-                        "
-                      >
-                        {tag}
-                      </span>
-                    )
-                  )}
-                </div>
-
-                <span
-                  aria-hidden="true"
-                  className="
-                    pointer-events-none
-                    absolute
-                    bottom-[-15px]
-                    right-3
-                    text-[74px]
-                    font-bold
-                    leading-none
-                    tracking-[-0.08em]
-                    text-white/[0.04]
-                    sm:text-[86px]
-                    2xl:text-[72px]
-                  "
-                >
-                  {stage.number}
-                </span>
-              </article>
-            )
+                      ${
+                        isActive
+                          ? "text-cyan-200/[0.07]"
+                          : "text-white/[0.04]"
+                      }
+                    `}
+                  >
+                    {stage.number}
+                  </span>
+                </article>
+              );
+            }
           )}
         </div>
 

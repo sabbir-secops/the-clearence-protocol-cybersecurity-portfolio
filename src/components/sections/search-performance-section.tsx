@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -230,6 +231,52 @@ export default function SearchPerformanceSection() {
     () => getLayer(activeLayer),
     [activeLayer]
   );
+
+  const activeLayerIndex =
+    useMemo(
+      () =>
+        searchLayers.findIndex(
+          (layer) =>
+            layer.id === activeLayer
+        ),
+      [activeLayer]
+    );
+
+  const signalProgress =
+    useMemo(
+      () =>
+        searchLayers.length > 1
+          ? Math.max(
+              0,
+              activeLayerIndex
+            ) /
+            (
+              searchLayers.length -
+              1
+            )
+          : 0,
+      [activeLayerIndex]
+    );
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(
+        "system:search-layer-change",
+        {
+          detail: {
+            id: activeData.id,
+            number: activeData.number,
+            name: activeData.name,
+            status: activeData.status,
+            index: activeLayerIndex,
+          },
+        }
+      )
+    );
+  }, [
+    activeData,
+    activeLayerIndex,
+  ]);
 
   useLayoutEffect(() => {
     const section =
@@ -695,9 +742,9 @@ export default function SearchPerformanceSection() {
                 h-px
                 -translate-y-1/2
                 bg-gradient-to-r
-                from-cyan-300/10
-                via-cyan-300/50
-                to-cyan-300/10
+                from-cyan-300/[0.07]
+                via-cyan-300/[0.18]
+                to-cyan-300/[0.07]
               "
             />
 
@@ -708,13 +755,23 @@ export default function SearchPerformanceSection() {
                 left-[6%]
                 top-1/2
                 h-[3px]
-                w-[10%]
                 -translate-y-1/2
-                animate-pulse
                 rounded-full
-                bg-cyan-300
-                shadow-[0_0_25px_rgba(72,215,255,0.7)]
+                bg-cyan-300/75
+                shadow-[0_0_22px_rgba(72,215,255,0.38)]
+                transition-[width,opacity]
+                duration-500
+                ease-out
               "
+              style={{
+                width: `${
+                  signalProgress * 88
+                }%`,
+                opacity:
+                  activeLayerIndex === 0
+                    ? 0.4
+                    : 0.82,
+              }}
             />
 
             <div
@@ -729,10 +786,17 @@ export default function SearchPerformanceSection() {
               "
             >
               {searchLayers.map(
-                (layer) => {
+                (
+                  layer,
+                  index
+                ) => {
                   const active =
                     activeLayer ===
                     layer.id;
+
+                  const passed =
+                    index <
+                    activeLayerIndex;
 
                   return (
                     <button
@@ -740,11 +804,6 @@ export default function SearchPerformanceSection() {
                       type="button"
                       aria-pressed={
                         active
-                      }
-                      onMouseEnter={() =>
-                        setActiveLayer(
-                          layer.id
-                        )
                       }
                       onFocus={() =>
                         setActiveLayer(
@@ -756,7 +815,7 @@ export default function SearchPerformanceSection() {
                           layer.id
                         )
                       }
-                      className="
+                      className={`
                         search-layer-node
                         group
                         relative
@@ -765,7 +824,28 @@ export default function SearchPerformanceSection() {
                         flex-col
                         items-center
                         text-center
-                      "
+                        transition-[transform,opacity]
+                        duration-500
+                        ease-out
+
+                        ${
+                          active
+                            ? `
+                                z-20
+                                scale-[1.025]
+                                opacity-100
+                              `
+                            : passed
+                              ? `
+                                  z-10
+                                  opacity-88
+                                `
+                              : `
+                                  opacity-62
+                                  hover:opacity-88
+                                `
+                        }
+                      `}
                     >
                       <span
                         className="
@@ -796,15 +876,20 @@ export default function SearchPerformanceSection() {
                           ${
                             active
                               ? `
-                                border-cyan-300/55
-                                bg-cyan-300/[0.10]
-                                shadow-[0_0_55px_rgba(72,215,255,0.12)]
-                              `
-                              : `
-                                border-white/[0.14]
-                                bg-[#0d141b]
-                                group-hover:border-cyan-300/30
-                              `
+                                  border-cyan-300/55
+                                  bg-cyan-300/[0.10]
+                                  shadow-[0_0_48px_rgba(72,215,255,0.10)]
+                                `
+                              : passed
+                                ? `
+                                    border-cyan-200/[0.16]
+                                    bg-cyan-300/[0.028]
+                                  `
+                                : `
+                                    border-white/[0.10]
+                                    bg-[#0d141b]
+                                    group-hover:border-cyan-300/28
+                                  `
                           }
                         `}
                       >
@@ -818,11 +903,15 @@ export default function SearchPerformanceSection() {
                             ${
                               active
                                 ? `
-                                  border-cyan-300/20
-                                `
-                                : `
-                                  border-white/[0.06]
-                                `
+                                    border-cyan-300/20
+                                  `
+                                : passed
+                                  ? `
+                                      border-cyan-200/[0.09]
+                                    `
+                                  : `
+                                      border-white/[0.05]
+                                    `
                             }
                           `}
                         />
@@ -837,12 +926,16 @@ export default function SearchPerformanceSection() {
                             ${
                               active
                                 ? `
-                                  bg-cyan-300
-                                  shadow-[0_0_24px_rgba(72,215,255,0.9)]
-                                `
-                                : `
-                                  bg-white/35
-                                `
+                                    bg-cyan-300
+                                    shadow-[0_0_22px_rgba(72,215,255,0.82)]
+                                  `
+                                : passed
+                                  ? `
+                                      bg-cyan-200/55
+                                    `
+                                  : `
+                                      bg-white/25
+                                    `
                             }
                           `}
                         />

@@ -61,6 +61,126 @@ type VisibilityDetail = {
   hidden?: boolean;
 };
 
+type LogicStageDetail = {
+  index: number;
+  name: string;
+  progress: number;
+};
+
+type CapabilityClusterDetail = {
+  id: string;
+  number: string;
+  title: string;
+};
+
+type SecurityLayerDetail = {
+  id: string;
+  number: string;
+  name: string;
+  status: string;
+};
+
+type SecurityLayerKey =
+  | "application"
+  | "vulnerability"
+  | "mobile"
+  | "infrastructure"
+  | "network"
+  | "intelligence";
+
+type ArchiveProjectDetail = {
+  id: string;
+  code: string;
+  name: string;
+  type: string;
+  status: string;
+  classified: boolean;
+};
+
+type ArchiveProjectKey =
+  | "hostsecual"
+  | "aged"
+  | "leemeo"
+  | "softparallax"
+  | "security-labs"
+  | "classified";
+
+type InfrastructureLayerDetail = {
+  id: string;
+  number: string;
+  name: string;
+  status: string;
+  index: number;
+};
+
+type InfrastructureLayerKey =
+  | "client"
+  | "dns"
+  | "edge"
+  | "defense"
+  | "server"
+  | "container"
+  | "application"
+  | "data";
+
+type SearchLayerDetail = {
+  id: string;
+  number: string;
+  name: string;
+  status: string;
+  index: number;
+};
+
+type SearchLayerKey =
+  | "performance"
+  | "vitals"
+  | "technical"
+  | "architecture"
+  | "structured"
+  | "semantic"
+  | "aeo"
+  | "geo";
+
+type ResearchNodeDetail = {
+  id: string;
+  number: string;
+  name: string;
+  status: string;
+  index: number;
+};
+
+type ResearchNodeKey =
+  | "security"
+  | "technical"
+  | "ai"
+  | "llm"
+  | "rag"
+  | "visualization"
+  | "interactive"
+  | "documentation";
+
+type ClassifiedState =
+  | "idle"
+  | "scanning"
+  | "denied";
+
+type ClassifiedStateDetail = {
+  state: ClassifiedState;
+  recovered: number;
+  total: number;
+};
+
+type ContactState =
+  | "idle"
+  | "submitting"
+  | "success"
+  | "activation"
+  | "error";
+
+type ContactStateDetail = {
+  state: ContactState;
+};
+
 type RealCoreModelProps = {
   onReady: (
     materials: THREE.MeshStandardMaterial[]
@@ -961,6 +1081,145 @@ function CoreSystem() {
   const activeSectionRef =
     useRef("hero");
 
+  const identityFocusRef =
+    useRef(0);
+
+  const logicFocusRef =
+    useRef(0);
+
+  const logicStageTargetRef =
+    useRef(0);
+
+  const logicStageCurrentRef =
+    useRef(0);
+
+  const capabilityClusterRef =
+    useRef("security");
+
+  const securityLayerRef =
+    useRef<SecurityLayerKey>(
+      "application"
+    );
+
+  const securityLayerBlendRef =
+    useRef<Record<
+      SecurityLayerKey,
+      number
+    >>({
+      application: 1,
+      vulnerability: 0,
+      mobile: 0,
+      infrastructure: 0,
+      network: 0,
+      intelligence: 0,
+    });
+
+  const archiveProjectRef =
+    useRef<ArchiveProjectKey>(
+      "hostsecual"
+    );
+
+  const archiveProjectBlendRef =
+    useRef<Record<
+      ArchiveProjectKey,
+      number
+    >>({
+      hostsecual: 1,
+      aged: 0,
+      leemeo: 0,
+      softparallax: 0,
+      "security-labs": 0,
+      classified: 0,
+    });
+
+  const infrastructureLayerRef =
+    useRef<InfrastructureLayerKey>(
+      "server"
+    );
+
+  const infrastructureLayerBlendRef =
+    useRef<Record<
+      InfrastructureLayerKey,
+      number
+    >>({
+      client: 0,
+      dns: 0,
+      edge: 0,
+      defense: 0,
+      server: 1,
+      container: 0,
+      application: 0,
+      data: 0,
+    });
+
+  const searchLayerRef =
+    useRef<SearchLayerKey>(
+      "performance"
+    );
+
+  const searchLayerBlendRef =
+    useRef<Record<
+      SearchLayerKey,
+      number
+    >>({
+      performance: 1,
+      vitals: 0,
+      technical: 0,
+      architecture: 0,
+      structured: 0,
+      semantic: 0,
+      aeo: 0,
+      geo: 0,
+    });
+
+  const researchNodeRef =
+    useRef<ResearchNodeKey>(
+      "security"
+    );
+
+  const researchNodeBlendRef =
+    useRef<Record<
+      ResearchNodeKey,
+      number
+    >>({
+      security: 1,
+      technical: 0,
+      ai: 0,
+      llm: 0,
+      rag: 0,
+      visualization: 0,
+      interactive: 0,
+      documentation: 0,
+    });
+
+  const classifiedStateRef =
+    useRef<ClassifiedState>(
+      "idle"
+    );
+
+  const classifiedRecoveryTargetRef =
+    useRef(0);
+
+  const classifiedRecoveryCurrentRef =
+    useRef(0);
+
+  const contactStateRef =
+    useRef<ContactState>(
+      "idle"
+    );
+
+  const contactStateBlendRef =
+    useRef<Record<
+      ContactState,
+      number
+    >>({
+      idle: 1,
+      submitting: 0,
+      success: 0,
+      activation: 0,
+      error: 0,
+    });
+
   const restrictedTargetRef =
     useRef(0);
 
@@ -1418,6 +1677,256 @@ function CoreSystem() {
           detail.pageProgress;
       };
 
+    const handleLogicStageChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<LogicStageDetail>;
+
+        const index =
+          customEvent.detail
+            ?.index;
+
+        if (
+          typeof index !==
+          "number"
+        ) {
+          return;
+        }
+
+        logicStageTargetRef.current =
+          THREE.MathUtils.clamp(
+            index,
+            0,
+            5
+          );
+      };
+
+    const handleCapabilityClusterChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<CapabilityClusterDetail>;
+
+        const id =
+          customEvent.detail
+            ?.id;
+
+        if (!id) {
+          return;
+        }
+
+        capabilityClusterRef.current =
+          id;
+      };
+
+    const handleSecurityLayerChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<SecurityLayerDetail>;
+
+        const id =
+          customEvent.detail
+            ?.id;
+
+        if (
+          id !== "application" &&
+          id !== "vulnerability" &&
+          id !== "mobile" &&
+          id !== "infrastructure" &&
+          id !== "network" &&
+          id !== "intelligence"
+        ) {
+          return;
+        }
+
+        securityLayerRef.current =
+          id;
+      };
+
+    const handleArchiveProjectChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<ArchiveProjectDetail>;
+
+        const id =
+          customEvent.detail
+            ?.id;
+
+        if (
+          id !== "hostsecual" &&
+          id !== "aged" &&
+          id !== "leemeo" &&
+          id !== "softparallax" &&
+          id !== "security-labs" &&
+          id !== "classified"
+        ) {
+          return;
+        }
+
+        archiveProjectRef.current =
+          id;
+      };
+
+    const handleInfrastructureLayerChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<InfrastructureLayerDetail>;
+
+        const id =
+          customEvent.detail
+            ?.id;
+
+        if (
+          id !== "client" &&
+          id !== "dns" &&
+          id !== "edge" &&
+          id !== "defense" &&
+          id !== "server" &&
+          id !== "container" &&
+          id !== "application" &&
+          id !== "data"
+        ) {
+          return;
+        }
+
+        infrastructureLayerRef.current =
+          id;
+      };
+
+    const handleSearchLayerChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<SearchLayerDetail>;
+
+        const id =
+          customEvent.detail
+            ?.id;
+
+        if (
+          id !== "performance" &&
+          id !== "vitals" &&
+          id !== "technical" &&
+          id !== "architecture" &&
+          id !== "structured" &&
+          id !== "semantic" &&
+          id !== "aeo" &&
+          id !== "geo"
+        ) {
+          return;
+        }
+
+        searchLayerRef.current =
+          id;
+      };
+
+    const handleResearchNodeChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<ResearchNodeDetail>;
+
+        const id =
+          customEvent.detail
+            ?.id;
+
+        if (
+          id !== "security" &&
+          id !== "technical" &&
+          id !== "ai" &&
+          id !== "llm" &&
+          id !== "rag" &&
+          id !== "visualization" &&
+          id !== "interactive" &&
+          id !== "documentation"
+        ) {
+          return;
+        }
+
+        researchNodeRef.current =
+          id;
+      };
+
+    const handleClassifiedStateChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<ClassifiedStateDetail>;
+
+        const detail =
+          customEvent.detail;
+
+        if (!detail) {
+          return;
+        }
+
+        if (
+          detail.state !== "idle" &&
+          detail.state !== "scanning" &&
+          detail.state !== "denied"
+        ) {
+          return;
+        }
+
+        classifiedStateRef.current =
+          detail.state;
+
+        const recovered =
+          typeof detail.recovered ===
+          "number"
+            ? detail.recovered
+            : 0;
+
+        const total =
+          typeof detail.total ===
+            "number" &&
+          detail.total > 0
+            ? detail.total
+            : 1;
+
+        classifiedRecoveryTargetRef.current =
+          clamp01(
+            recovered / total
+          );
+      };
+
+    const handleContactStateChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<ContactStateDetail>;
+
+        const state =
+          customEvent.detail
+            ?.state;
+
+        if (
+          state !== "idle" &&
+          state !== "submitting" &&
+          state !== "success" &&
+          state !== "activation" &&
+          state !== "error"
+        ) {
+          return;
+        }
+
+        contactStateRef.current =
+          state;
+      };
+
     const handleCinematicStart =
       (
         event: Event
@@ -1547,6 +2056,51 @@ function CoreSystem() {
     );
 
     window.addEventListener(
+      "system:logic-stage-change",
+      handleLogicStageChange
+    );
+
+    window.addEventListener(
+      "system:capability-cluster-change",
+      handleCapabilityClusterChange
+    );
+
+    window.addEventListener(
+      "system:security-layer-change",
+      handleSecurityLayerChange
+    );
+
+    window.addEventListener(
+      "system:archive-project-change",
+      handleArchiveProjectChange
+    );
+
+    window.addEventListener(
+      "system:infrastructure-layer-change",
+      handleInfrastructureLayerChange
+    );
+
+    window.addEventListener(
+      "system:search-layer-change",
+      handleSearchLayerChange
+    );
+
+    window.addEventListener(
+      "system:research-node-change",
+      handleResearchNodeChange
+    );
+
+    window.addEventListener(
+      "system:classified-state-change",
+      handleClassifiedStateChange
+    );
+
+    window.addEventListener(
+      "system:contact-state-change",
+      handleContactStateChange
+    );
+
+    window.addEventListener(
       "system:cinematic-start",
       handleCinematicStart
     );
@@ -1616,6 +2170,51 @@ function CoreSystem() {
       window.removeEventListener(
         "system:progress",
         handleProgress
+      );
+
+      window.removeEventListener(
+        "system:logic-stage-change",
+        handleLogicStageChange
+      );
+
+      window.removeEventListener(
+        "system:capability-cluster-change",
+        handleCapabilityClusterChange
+      );
+
+      window.removeEventListener(
+        "system:security-layer-change",
+        handleSecurityLayerChange
+      );
+
+      window.removeEventListener(
+        "system:archive-project-change",
+        handleArchiveProjectChange
+      );
+
+      window.removeEventListener(
+        "system:infrastructure-layer-change",
+        handleInfrastructureLayerChange
+      );
+
+      window.removeEventListener(
+        "system:search-layer-change",
+        handleSearchLayerChange
+      );
+
+      window.removeEventListener(
+        "system:research-node-change",
+        handleResearchNodeChange
+      );
+
+      window.removeEventListener(
+        "system:classified-state-change",
+        handleClassifiedStateChange
+      );
+
+      window.removeEventListener(
+        "system:contact-state-change",
+        handleContactStateChange
       );
 
       window.removeEventListener(
@@ -1807,17 +2406,388 @@ function CoreSystem() {
       const activeSection =
         activeSectionRef.current;
 
+      const identityTarget =
+        activeSection ===
+          "identity"
+          ? 1
+          : 0;
+
+      const identityFocus =
+        reducedMotionRef.current
+          ? identityTarget
+          : smoothValue(
+              identityFocusRef.current,
+              identityTarget,
+              4.2,
+              delta
+            );
+
+      identityFocusRef.current =
+        identityFocus;
+
+      const logicTarget =
+        activeSection ===
+          "principle"
+          ? 1
+          : 0;
+
+      const logicFocus =
+        reducedMotionRef.current
+          ? logicTarget
+          : smoothValue(
+              logicFocusRef.current,
+              logicTarget,
+              4,
+              delta
+            );
+
+      logicFocusRef.current =
+        logicFocus;
+
+      const logicStage =
+        reducedMotionRef.current
+          ? logicStageTargetRef.current
+          : smoothValue(
+              logicStageCurrentRef.current,
+              logicStageTargetRef.current,
+              5.5,
+              delta
+            );
+
+      logicStageCurrentRef.current =
+        logicStage;
+
+      const stageWeight =
+        (
+          stageIndex: number
+        ) =>
+          clamp01(
+            1 -
+              Math.abs(
+                logicStage -
+                  stageIndex
+              )
+          );
+
+      const buildWeight =
+        stageWeight(0);
+
+      const secureWeight =
+        stageWeight(1);
+
+      const verifyWeight =
+        stageWeight(2);
+
+      const operateWeight =
+        stageWeight(3);
+
+      const optimizeWeight =
+        stageWeight(4);
+
+      const evolveWeight =
+        stageWeight(5);
+
+      const logicProductFocus =
+        logicFocus *
+        (
+          buildWeight *
+            0.9 +
+          verifyWeight *
+            0.16 +
+          optimizeWeight *
+            0.16
+        );
+
+      const logicSecurityFocus =
+        logicFocus *
+        (
+          secureWeight *
+            0.9 +
+          verifyWeight *
+            0.72
+        );
+
+      const logicInfrastructureFocus =
+        logicFocus *
+        operateWeight *
+        0.9;
+
+      const logicSignalFocus =
+        logicFocus *
+        (
+          verifyWeight *
+            0.42 +
+          optimizeWeight *
+            0.9
+        );
+
+      const logicIntelligenceFocus =
+        logicFocus *
+        evolveWeight *
+        0.9;
+
+      const capabilityActive =
+        activeSection ===
+          "capabilities"
+          ? 1
+          : 0;
+
+      const capabilityCluster =
+        capabilityClusterRef.current;
+
+      const capabilityNetworkFocus =
+        capabilityActive *
+        0.45;
+
+      const capabilitySecurityFocus =
+        capabilityActive *
+        (
+          capabilityCluster ===
+            "security"
+            ? 0.8
+            : 0
+        );
+
+      const capabilityInfrastructureFocus =
+        capabilityActive *
+        (
+          capabilityCluster ===
+            "infrastructure"
+            ? 0.8
+            : capabilityCluster ===
+                "engineering"
+              ? 0.45
+              : 0
+        );
+
+      const capabilityProductFocus =
+        capabilityActive *
+        (
+          capabilityCluster ===
+            "product"
+            ? 0.8
+            : capabilityCluster ===
+                "engineering"
+              ? 0.45
+              : 0
+        );
+
+      const capabilitySignalFocus =
+        capabilityActive *
+        (
+          capabilityCluster ===
+            "search"
+            ? 0.8
+            : 0
+        );
+
+      const capabilityIntelligenceFocus =
+        capabilityActive *
+        (
+          capabilityCluster ===
+            "research"
+            ? 0.8
+            : 0
+        );
+
       const securityFocus =
         activeSection ===
           "security"
           ? 1
           : 0;
 
+      const securityLayer =
+        securityLayerRef.current;
+
+      const securityLayerBlend =
+        securityLayerBlendRef.current;
+
+      const securityLayerKeys:
+        SecurityLayerKey[] = [
+          "application",
+          "vulnerability",
+          "mobile",
+          "infrastructure",
+          "network",
+          "intelligence",
+        ];
+
+      securityLayerKeys.forEach(
+        (
+          layerId
+        ) => {
+          const target =
+            securityLayer ===
+              layerId
+              ? 1
+              : 0;
+
+          securityLayerBlend[
+            layerId
+          ] =
+            reducedMotionRef.current
+              ? target
+              : smoothValue(
+                  securityLayerBlend[
+                    layerId
+                  ],
+                  target,
+                  5.2,
+                  delta
+                );
+        }
+      );
+
+      const securityApplicationFocus =
+        securityFocus *
+        securityLayerBlend.application;
+
+      const securityVulnerabilityFocus =
+        securityFocus *
+        securityLayerBlend.vulnerability;
+
+      const securityMobileFocus =
+        securityFocus *
+        securityLayerBlend.mobile;
+
+      const securityInfrastructureFocus =
+        securityFocus *
+        securityLayerBlend.infrastructure;
+
+      const securityNetworkFocus =
+        securityFocus *
+        securityLayerBlend.network;
+
+      const securityIntelligenceFocus =
+        securityFocus *
+        securityLayerBlend.intelligence;
+
       const infrastructureFocus =
         activeSection ===
           "infrastructure"
           ? 1
           : 0;
+
+      const infrastructureLayer =
+        infrastructureLayerRef.current;
+
+      const infrastructureLayerBlend =
+        infrastructureLayerBlendRef.current;
+
+      const infrastructureLayerKeys:
+        InfrastructureLayerKey[] = [
+          "client",
+          "dns",
+          "edge",
+          "defense",
+          "server",
+          "container",
+          "application",
+          "data",
+        ];
+
+      infrastructureLayerKeys.forEach(
+        (
+          layerId
+        ) => {
+          const target =
+            infrastructureLayer ===
+              layerId
+              ? 1
+              : 0;
+
+          infrastructureLayerBlend[
+            layerId
+          ] =
+            reducedMotionRef.current
+              ? target
+              : smoothValue(
+                  infrastructureLayerBlend[
+                    layerId
+                  ],
+                  target,
+                  4.8,
+                  delta
+                );
+        }
+      );
+
+      const topologyClientFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.client;
+
+      const topologyDnsFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.dns;
+
+      const topologyEdgeFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.edge;
+
+      const topologyDefenseFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.defense;
+
+      const topologyServerFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.server;
+
+      const topologyContainerFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.container;
+
+      const topologyApplicationFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.application;
+
+      const topologyDataFocus =
+        infrastructureFocus *
+        infrastructureLayerBlend.data;
+
+      const topologyInfrastructureFocus =
+        topologyClientFocus *
+          0.25 +
+        topologyDnsFocus *
+          0.65 +
+        topologyEdgeFocus *
+          0.8 +
+        topologyDefenseFocus *
+          0.8 +
+        topologyServerFocus +
+        topologyContainerFocus *
+          0.8 +
+        topologyApplicationFocus *
+          0.55 +
+        topologyDataFocus *
+          0.7;
+
+      const topologySecurityFocus =
+        topologyEdgeFocus *
+          0.2 +
+        topologyDefenseFocus *
+          0.72 +
+        topologyDataFocus *
+          0.35;
+
+      const topologySignalFocus =
+        topologyClientFocus *
+          0.4 +
+        topologyDnsFocus *
+          0.65 +
+        topologyEdgeFocus *
+          0.55 +
+        topologyDefenseFocus *
+          0.25;
+
+      const topologyProductFocus =
+        topologyClientFocus *
+          0.25 +
+        topologyContainerFocus *
+          0.4 +
+        topologyApplicationFocus *
+          0.82 +
+        topologyDataFocus *
+          0.2;
 
       const intelligenceFocus =
         activeSection ===
@@ -1833,11 +2803,581 @@ function CoreSystem() {
           ? 1
           : 0;
 
+      const searchLayer =
+        searchLayerRef.current;
+
+      const searchLayerBlend =
+        searchLayerBlendRef.current;
+
+      const searchLayerKeys:
+        SearchLayerKey[] = [
+          "performance",
+          "vitals",
+          "technical",
+          "architecture",
+          "structured",
+          "semantic",
+          "aeo",
+          "geo",
+        ];
+
+      searchLayerKeys.forEach(
+        (
+          layerId
+        ) => {
+          const target =
+            searchLayer ===
+              layerId
+              ? 1
+              : 0;
+
+          searchLayerBlend[
+            layerId
+          ] =
+            reducedMotionRef.current
+              ? target
+              : smoothValue(
+                  searchLayerBlend[
+                    layerId
+                  ],
+                  target,
+                  4.4,
+                  delta
+                );
+        }
+      );
+
+      const searchPerformanceFocus =
+        signalFocus *
+        searchLayerBlend.performance;
+
+      const searchVitalsFocus =
+        signalFocus *
+        searchLayerBlend.vitals;
+
+      const searchTechnicalFocus =
+        signalFocus *
+        searchLayerBlend.technical;
+
+      const searchArchitectureFocus =
+        signalFocus *
+        searchLayerBlend.architecture;
+
+      const searchStructuredFocus =
+        signalFocus *
+        searchLayerBlend.structured;
+
+      const searchSemanticFocus =
+        signalFocus *
+        searchLayerBlend.semantic;
+
+      const searchAeoFocus =
+        signalFocus *
+        searchLayerBlend.aeo;
+
+      const searchGeoFocus =
+        signalFocus *
+        searchLayerBlend.geo;
+
+      const searchLayerSignalFocus =
+        searchPerformanceFocus *
+          0.72 +
+        searchVitalsFocus *
+          0.82 +
+        searchTechnicalFocus *
+          0.76 +
+        searchArchitectureFocus *
+          0.68 +
+        searchStructuredFocus *
+          0.72 +
+        searchSemanticFocus *
+          0.78 +
+        searchAeoFocus *
+          0.84 +
+        searchGeoFocus *
+          0.88;
+
+      const searchInfrastructureFocus =
+        searchPerformanceFocus *
+          0.2 +
+        searchTechnicalFocus *
+          0.18 +
+        searchArchitectureFocus *
+          0.12;
+
+      const searchProductFocus =
+        searchPerformanceFocus *
+          0.12 +
+        searchVitalsFocus *
+          0.12 +
+        searchArchitectureFocus *
+          0.16 +
+        searchStructuredFocus *
+          0.12;
+
+      const searchIntelligenceFocus =
+        searchStructuredFocus *
+          0.1 +
+        searchSemanticFocus *
+          0.16 +
+        searchAeoFocus *
+          0.2 +
+        searchGeoFocus *
+          0.24;
+
+      const researchNode =
+        researchNodeRef.current;
+
+      const researchNodeBlend =
+        researchNodeBlendRef.current;
+
+      const researchNodeKeys:
+        ResearchNodeKey[] = [
+          "security",
+          "technical",
+          "ai",
+          "llm",
+          "rag",
+          "visualization",
+          "interactive",
+          "documentation",
+        ];
+
+      researchNodeKeys.forEach(
+        (
+          nodeId
+        ) => {
+          const target =
+            researchNode ===
+              nodeId
+              ? 1
+              : 0;
+
+          researchNodeBlend[
+            nodeId
+          ] =
+            reducedMotionRef.current
+              ? target
+              : smoothValue(
+                  researchNodeBlend[
+                    nodeId
+                  ],
+                  target,
+                  4.2,
+                  delta
+                );
+        }
+      );
+
+      const researchSecurityFocus =
+        intelligenceFocus *
+        researchNodeBlend.security *
+        0.34;
+
+      const researchInfrastructureFocus =
+        intelligenceFocus *
+        (
+          researchNodeBlend.technical *
+            0.22 +
+          researchNodeBlend.documentation *
+            0.06
+        );
+
+      const researchProductFocus =
+        intelligenceFocus *
+        (
+          researchNodeBlend.ai *
+            0.3 +
+          researchNodeBlend.llm *
+            0.18 +
+          researchNodeBlend.interactive *
+            0.24 +
+          researchNodeBlend.documentation *
+            0.08
+        );
+
+      const researchSignalFocus =
+        intelligenceFocus *
+        (
+          researchNodeBlend.llm *
+            0.08 +
+          researchNodeBlend.rag *
+            0.32 +
+          researchNodeBlend.visualization *
+            0.28 +
+          researchNodeBlend.interactive *
+            0.18 +
+          researchNodeBlend.documentation *
+            0.1
+        );
+
+      const researchIntelligenceFocus =
+        intelligenceFocus *
+        (
+          researchNodeBlend.security *
+            0.18 +
+          researchNodeBlend.technical *
+            0.22 +
+          researchNodeBlend.ai *
+            0.3 +
+          researchNodeBlend.llm *
+            0.38 +
+          researchNodeBlend.rag *
+            0.42 +
+          researchNodeBlend.visualization *
+            0.34 +
+          researchNodeBlend.interactive *
+            0.28 +
+          researchNodeBlend.documentation *
+            0.24
+        );
+
+      const classifiedActive =
+        activeSection ===
+          "classified"
+          ? 1
+          : 0;
+
+      const classifiedState =
+        classifiedStateRef.current;
+
+      const classifiedRecovery =
+        reducedMotionRef.current
+          ? classifiedRecoveryTargetRef.current
+          : smoothValue(
+              classifiedRecoveryCurrentRef.current,
+              classifiedRecoveryTargetRef.current,
+              5.5,
+              delta
+            );
+
+      classifiedRecoveryCurrentRef.current =
+        classifiedRecovery;
+
+      const classifiedScanning =
+        classifiedActive *
+        (
+          classifiedState ===
+            "scanning"
+            ? 1
+            : 0
+        );
+
+      const classifiedDenied =
+        classifiedActive *
+        (
+          classifiedState ===
+            "denied"
+            ? 1
+            : 0
+        );
+
+      const classifiedRestrictedFocus =
+        classifiedActive *
+        (
+          0.42 +
+          classifiedScanning *
+            0.2 +
+          classifiedDenied *
+            0.3
+        );
+
+      const classifiedSignalFocus =
+        classifiedActive *
+        (
+          0.18 +
+          classifiedScanning *
+            (
+              0.34 +
+              classifiedRecovery *
+                0.22
+            ) +
+          classifiedDenied *
+            0.28
+        );
+
+      const classifiedSecurityFocus =
+        classifiedActive *
+        (
+          0.28 +
+          classifiedScanning *
+            0.22 +
+          classifiedDenied *
+            0.34
+        );
+
+      const classifiedInfrastructureFocus =
+        classifiedActive *
+        (
+          0.12 +
+          classifiedScanning *
+            0.12 +
+          classifiedDenied *
+            0.08
+        );
+
+      const classifiedIntelligenceFocus =
+        classifiedActive *
+        (
+          0.14 +
+          classifiedScanning *
+            classifiedRecovery *
+            0.26 +
+          classifiedDenied *
+            0.16
+        );
+
+      const contactActive =
+        activeSection ===
+          "contact"
+          ? 1
+          : 0;
+
+      const contactState =
+        contactStateRef.current;
+
+      const contactStateBlend =
+        contactStateBlendRef.current;
+
+      const contactStateKeys:
+        ContactState[] = [
+          "idle",
+          "submitting",
+          "success",
+          "activation",
+          "error",
+        ];
+
+      contactStateKeys.forEach(
+        (
+          state
+        ) => {
+          const target =
+            contactState ===
+              state
+              ? 1
+              : 0;
+
+          contactStateBlend[
+            state
+          ] =
+            reducedMotionRef.current
+              ? target
+              : smoothValue(
+                  contactStateBlend[
+                    state
+                  ],
+                  target,
+                  4.2,
+                  delta
+                );
+        }
+      );
+
+      const contactIdleFocus =
+        contactActive *
+        contactStateBlend.idle;
+
+      const contactSubmittingFocus =
+        contactActive *
+        contactStateBlend.submitting;
+
+      const contactSuccessFocus =
+        contactActive *
+        contactStateBlend.success;
+
+      const contactActivationFocus =
+        contactActive *
+        contactStateBlend.activation;
+
+      const contactErrorFocus =
+        contactActive *
+        contactStateBlend.error;
+
+      const contactConnectionFocus =
+        contactActive *
+        (
+          contactIdleFocus *
+            0.18 +
+          contactSubmittingFocus *
+            0.34 +
+          contactSuccessFocus *
+            0.46 +
+          contactActivationFocus *
+            0.2 +
+          contactErrorFocus *
+            0.16
+        );
+
+      const contactSignalFocus =
+        contactActive *
+        (
+          contactIdleFocus *
+            0.12 +
+          contactSubmittingFocus *
+            0.42 +
+          contactSuccessFocus *
+            0.28 +
+          contactActivationFocus *
+            0.16 +
+          contactErrorFocus *
+            0.18
+        );
+
+      const contactInfrastructureFocus =
+        contactActive *
+        (
+          contactIdleFocus *
+            0.08 +
+          contactSubmittingFocus *
+            0.18 +
+          contactSuccessFocus *
+            0.12 +
+          contactActivationFocus *
+            0.1 +
+          contactErrorFocus *
+            0.08
+        );
+
+      const contactSecurityFocus =
+        contactActive *
+        (
+          contactIdleFocus *
+            0.06 +
+          contactSubmittingFocus *
+            0.16 +
+          contactSuccessFocus *
+            0.08 +
+          contactActivationFocus *
+            0.1 +
+          contactErrorFocus *
+            0.12
+        );
+
+      const contactProductFocus =
+        contactActive *
+        (
+          contactIdleFocus *
+            0.08 +
+          contactSubmittingFocus *
+            0.12 +
+          contactSuccessFocus *
+            0.3 +
+          contactActivationFocus *
+            0.08 +
+          contactErrorFocus *
+            0.06
+        );
+
       const projectFocus =
         activeSection ===
           "archive"
           ? 1
           : 0;
+
+      const archiveProject =
+        archiveProjectRef.current;
+
+      const archiveProjectBlend =
+        archiveProjectBlendRef.current;
+
+      const archiveProjectKeys:
+        ArchiveProjectKey[] = [
+          "hostsecual",
+          "aged",
+          "leemeo",
+          "softparallax",
+          "security-labs",
+          "classified",
+        ];
+
+      archiveProjectKeys.forEach(
+        (
+          projectId
+        ) => {
+          const target =
+            archiveProject ===
+              projectId
+              ? 1
+              : 0;
+
+          archiveProjectBlend[
+            projectId
+          ] =
+            reducedMotionRef.current
+              ? target
+              : smoothValue(
+                  archiveProjectBlend[
+                    projectId
+                  ],
+                  target,
+                  4.2,
+                  delta
+                );
+        }
+      );
+
+      const archiveHostsecualFocus =
+        projectFocus *
+        archiveProjectBlend.hostsecual;
+
+      const archiveAgedFocus =
+        projectFocus *
+        archiveProjectBlend.aged;
+
+      const archiveLeemeoFocus =
+        projectFocus *
+        archiveProjectBlend.leemeo;
+
+      const archiveSoftparallaxFocus =
+        projectFocus *
+        archiveProjectBlend.softparallax;
+
+      const archiveSecurityLabsFocus =
+        projectFocus *
+        archiveProjectBlend[
+          "security-labs"
+        ];
+
+      const archiveClassifiedFocus =
+        projectFocus *
+        archiveProjectBlend.classified;
+
+      const archiveInfrastructureFocus =
+        archiveHostsecualFocus *
+          0.9 +
+        archiveAgedFocus *
+          0.3 +
+        archiveLeemeoFocus *
+          0.25;
+
+      const archiveProductFocus =
+        archiveAgedFocus *
+          0.8 +
+        archiveLeemeoFocus *
+          0.45 +
+        archiveSoftparallaxFocus *
+          0.3;
+
+      const archiveSignalFocus =
+        archiveSoftparallaxFocus *
+          0.7 +
+        archiveSecurityLabsFocus *
+          0.35;
+
+      const archiveSecurityFocus =
+        archiveHostsecualFocus *
+          0.5 +
+        archiveSecurityLabsFocus *
+          0.85;
+
+      const archiveIntelligenceFocus =
+        archiveSecurityLabsFocus *
+        0.35;
+
+      const archiveRestrictedFocus =
+        archiveClassifiedFocus *
+        0.36;
 
       securityColorRef.current
         .copy(
@@ -1846,6 +3386,16 @@ function CoreSystem() {
         .lerp(
           RESTRICTED_AMBER,
           restricted
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          archiveRestrictedFocus *
+            0.5
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          classifiedRestrictedFocus *
+            0.32
         );
 
       intelligenceColorRef.current
@@ -1856,6 +3406,16 @@ function CoreSystem() {
           RESTRICTED_AMBER,
           restricted *
             0.35
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          archiveRestrictedFocus *
+            0.28
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          classifiedRestrictedFocus *
+            0.42
         );
 
       productColorRef.current
@@ -1866,6 +3426,16 @@ function CoreSystem() {
           RESTRICTED_AMBER,
           restricted *
             0.72
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          archiveRestrictedFocus *
+            0.46
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          classifiedRestrictedFocus *
+            0.24
         );
 
       modelAccentRef.current
@@ -1873,9 +3443,19 @@ function CoreSystem() {
           currentAccentRef.current
         )
         .lerp(
+          SECURITY_CYAN,
+          identityFocus *
+            0.12
+        )
+        .lerp(
           RESTRICTED_AMBER,
           restricted *
             0.72
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          archiveRestrictedFocus *
+            0.5
         );
 
       const settleSpeed =
@@ -2061,8 +3641,14 @@ function CoreSystem() {
           smoothValue(
             modelPivotRef.current
               .position.z,
-            projectFocus *
-              0.04 *
+            (
+              projectFocus *
+                0.04 +
+              contactSubmittingFocus *
+                0.01 +
+              contactSuccessFocus *
+                0.024
+            ) *
               interactionFactor,
             8 +
               handoff *
@@ -2085,7 +3671,37 @@ function CoreSystem() {
               productActivation *
                 0.105 +
               projectFocus *
-                0.035
+                0.035 +
+              identityFocus *
+                0.018 +
+              logicProductFocus *
+                0.012 +
+              capabilityProductFocus *
+                0.014 +
+              securityApplicationFocus *
+                0.012 +
+              securityMobileFocus *
+                0.01 +
+              archiveProductFocus *
+                0.014 +
+              archiveSecurityFocus *
+                0.008 +
+              archiveRestrictedFocus *
+                0.018 +
+              topologyProductFocus *
+                0.016 +
+              topologySecurityFocus *
+                0.008 +
+              searchProductFocus *
+                0.01 +
+              researchProductFocus *
+                0.012 +
+              classifiedRestrictedFocus *
+                0.012 +
+              contactConnectionFocus *
+                0.01 +
+              contactProductFocus *
+                0.012
             ) *
             energy;
         }
@@ -2110,7 +3726,29 @@ function CoreSystem() {
           infrastructureActivation *
             0.02 +
           infrastructureFocus *
-            0.018;
+            0.018 +
+          identityFocus *
+            0.006 +
+          logicInfrastructureFocus *
+            0.012 +
+          capabilityInfrastructureFocus *
+            0.012 +
+          securityInfrastructureFocus *
+            0.014 +
+          securityNetworkFocus *
+            0.009 +
+          archiveInfrastructureFocus *
+            0.009 +
+          topologyInfrastructureFocus *
+            0.014 +
+          searchInfrastructureFocus *
+            0.006 +
+          researchInfrastructureFocus *
+            0.008 +
+          classifiedInfrastructureFocus *
+            0.014 +
+          contactInfrastructureFocus *
+            0.008;
 
         infrastructureRef.current
           .scale.setScalar(
@@ -2133,7 +3771,31 @@ function CoreSystem() {
             infrastructureActivation *
               0.1 +
             infrastructureFocus *
-              0.075
+              0.075 +
+            identityFocus *
+              0.028 +
+            logicInfrastructureFocus *
+              0.055 +
+            capabilityInfrastructureFocus *
+              0.05 +
+            capabilityNetworkFocus *
+              0.02 +
+            securityInfrastructureFocus *
+              0.055 +
+            securityNetworkFocus *
+              0.04 +
+            archiveInfrastructureFocus *
+              0.035 +
+            topologyInfrastructureFocus *
+              0.05 +
+            searchInfrastructureFocus *
+              0.024 +
+            researchInfrastructureFocus *
+              0.032 +
+            classifiedInfrastructureFocus *
+              0.07 +
+            contactInfrastructureFocus *
+              0.026
           ) *
           (
             1 -
@@ -2156,7 +3818,45 @@ function CoreSystem() {
               infrastructureActivation *
                 0.5 +
               signalFocus *
-                0.12
+                0.12 +
+              identityFocus *
+                0.06 +
+              logicSignalFocus *
+                0.07 +
+              logicInfrastructureFocus *
+                0.035 +
+              capabilityNetworkFocus *
+                0.1 +
+              capabilitySignalFocus *
+                0.04 +
+              securityVulnerabilityFocus *
+                0.035 +
+              securityNetworkFocus *
+                0.055 +
+              archiveInfrastructureFocus *
+                0.025 +
+              archiveSignalFocus *
+                0.045 +
+              topologySignalFocus *
+                0.09 +
+              topologyInfrastructureFocus *
+                0.035 +
+              searchLayerSignalFocus *
+                0.035 +
+              researchSignalFocus *
+                0.055 +
+              researchInfrastructureFocus *
+                0.02 +
+              classifiedSignalFocus *
+                0.15 +
+              classifiedInfrastructureFocus *
+                0.05 +
+              contactConnectionFocus *
+                0.07 +
+              contactSignalFocus *
+                0.085 +
+              contactInfrastructureFocus *
+                0.025
             ) *
             (
               1 -
@@ -2181,7 +3881,45 @@ function CoreSystem() {
             infrastructureActivation *
               0.13 +
             signalFocus *
-              0.12
+              0.12 +
+            identityFocus *
+              0.04 +
+            logicSignalFocus *
+              0.075 +
+            logicInfrastructureFocus *
+              0.04 +
+            capabilityNetworkFocus *
+              0.08 +
+            capabilitySignalFocus *
+              0.06 +
+            securityVulnerabilityFocus *
+              0.045 +
+            securityNetworkFocus *
+              0.07 +
+            archiveInfrastructureFocus *
+              0.025 +
+            archiveSignalFocus *
+              0.045 +
+            topologySignalFocus *
+              0.1 +
+            topologyInfrastructureFocus *
+              0.04 +
+            searchLayerSignalFocus *
+              0.03 +
+            researchSignalFocus *
+              0.05 +
+            researchInfrastructureFocus *
+              0.018 +
+            classifiedSignalFocus *
+              0.18 +
+            classifiedInfrastructureFocus *
+              0.05 +
+            contactConnectionFocus *
+              0.055 +
+            contactSignalFocus *
+              0.075 +
+            contactInfrastructureFocus *
+              0.02
           ) *
           energy *
           (
@@ -2197,7 +3935,29 @@ function CoreSystem() {
         const signalScale =
           1 +
           signalFocus *
-            0.045;
+            0.045 +
+          logicSignalFocus *
+            0.025 +
+          capabilitySignalFocus *
+            0.025 +
+          securityVulnerabilityFocus *
+            0.018 +
+          securityMobileFocus *
+            0.012 +
+          securityNetworkFocus *
+            0.022 +
+          archiveSignalFocus *
+            0.015 +
+          topologySignalFocus *
+            0.025 +
+          searchLayerSignalFocus *
+            0.012 +
+          researchSignalFocus *
+            0.018 +
+          classifiedSignalFocus *
+            0.035 +
+          contactSignalFocus *
+            0.018;
 
         signalFieldRef.current
           .scale.setScalar(
@@ -2219,7 +3979,43 @@ function CoreSystem() {
               securityActivation *
                 0.54 +
               signalFocus *
-                0.15
+                0.15 +
+              logicSecurityFocus *
+                0.08 +
+              logicSignalFocus *
+                0.08 +
+              capabilitySecurityFocus *
+                0.06 +
+              capabilitySignalFocus *
+                0.08 +
+              securityVulnerabilityFocus *
+                0.08 +
+              securityMobileFocus *
+                0.045 +
+              securityNetworkFocus *
+                0.09 +
+              archiveSignalFocus *
+                0.04 +
+              archiveSecurityFocus *
+                0.025 +
+              topologySignalFocus *
+                0.075 +
+              topologySecurityFocus *
+                0.055 +
+              searchLayerSignalFocus *
+                0.028 +
+              researchSignalFocus *
+                0.045 +
+              researchSecurityFocus *
+                0.03 +
+              classifiedSignalFocus *
+                0.14 +
+              classifiedSecurityFocus *
+                0.08 +
+              contactSignalFocus *
+                0.045 +
+              contactSecurityFocus *
+                0.03
             ) *
             (
               1 -
@@ -2290,6 +4086,30 @@ function CoreSystem() {
           securityActivation *
             0.015 +
           securityFocus *
+            0.022 +
+          logicSecurityFocus *
+            0.014 +
+          capabilitySecurityFocus *
+            0.012 +
+          securityApplicationFocus *
+            0.007 +
+          securityVulnerabilityFocus *
+            0.009 +
+          securityMobileFocus *
+            0.006 +
+          securityInfrastructureFocus *
+            0.006 +
+          securityNetworkFocus *
+            0.008 +
+          securityIntelligenceFocus *
+            0.006 +
+          archiveSecurityFocus *
+            0.009 +
+          topologySecurityFocus *
+            0.012 +
+          researchSecurityFocus *
+            0.01 +
+          classifiedSecurityFocus *
             0.022;
 
         securityRef.current
@@ -2313,7 +4133,33 @@ function CoreSystem() {
             securityActivation *
               0.17 +
             securityFocus *
-              0.12
+              0.12 +
+            logicSecurityFocus *
+              0.075 +
+            capabilitySecurityFocus *
+              0.065 +
+            securityApplicationFocus *
+              0.032 +
+            securityVulnerabilityFocus *
+              0.04 +
+            securityMobileFocus *
+              0.028 +
+            securityInfrastructureFocus *
+              0.03 +
+            securityNetworkFocus *
+              0.036 +
+            securityIntelligenceFocus *
+              0.03 +
+            archiveSecurityFocus *
+              0.04 +
+            topologySecurityFocus *
+              0.06 +
+            researchSecurityFocus *
+              0.045 +
+            classifiedSecurityFocus *
+              0.11 +
+            contactSecurityFocus *
+              0.03
           ) *
           energy;
       }
@@ -2333,7 +4179,33 @@ function CoreSystem() {
             securityActivation *
               0.115 +
             securityFocus *
-              0.085
+              0.085 +
+            logicSecurityFocus *
+              0.055 +
+            capabilitySecurityFocus *
+              0.045 +
+            securityApplicationFocus *
+              0.022 +
+            securityVulnerabilityFocus *
+              0.028 +
+            securityMobileFocus *
+              0.02 +
+            securityInfrastructureFocus *
+              0.021 +
+            securityNetworkFocus *
+              0.025 +
+            securityIntelligenceFocus *
+              0.022 +
+            archiveSecurityFocus *
+              0.028 +
+            topologySecurityFocus *
+              0.045 +
+            researchSecurityFocus *
+              0.032 +
+            classifiedSecurityFocus *
+              0.08 +
+            contactSecurityFocus *
+              0.022
           ) *
           energy;
       }
@@ -2378,7 +4250,21 @@ function CoreSystem() {
           intelligenceActivation *
             0.02 +
           intelligenceFocus *
-            0.028;
+            0.028 +
+          logicIntelligenceFocus *
+            0.014 +
+          capabilityIntelligenceFocus *
+            0.012 +
+          securityIntelligenceFocus *
+            0.014 +
+          archiveIntelligenceFocus *
+            0.008 +
+          searchIntelligenceFocus *
+            0.006 +
+          researchIntelligenceFocus *
+            0.012 +
+          classifiedIntelligenceFocus *
+            0.02;
 
         intelligenceRef.current
           .scale.setScalar(
@@ -2401,7 +4287,21 @@ function CoreSystem() {
             intelligenceActivation *
               0.11 +
             intelligenceFocus *
-              0.1
+              0.1 +
+            logicIntelligenceFocus *
+              0.06 +
+            capabilityIntelligenceFocus *
+              0.05 +
+            securityIntelligenceFocus *
+              0.065 +
+            archiveIntelligenceFocus *
+              0.035 +
+            searchIntelligenceFocus *
+              0.022 +
+            researchIntelligenceFocus *
+              0.04 +
+            classifiedIntelligenceFocus *
+              0.075
           ) *
           (
             1 -
@@ -2425,7 +4325,21 @@ function CoreSystem() {
             intelligenceActivation *
               0.15 +
             intelligenceFocus *
-              0.1
+              0.1 +
+            logicIntelligenceFocus *
+              0.05 +
+            capabilityIntelligenceFocus *
+              0.04 +
+            securityIntelligenceFocus *
+              0.05 +
+            archiveIntelligenceFocus *
+              0.025 +
+            searchIntelligenceFocus *
+              0.018 +
+            researchIntelligenceFocus *
+              0.032 +
+            classifiedIntelligenceFocus *
+              0.06
           ) *
           (
             1 -
@@ -2518,7 +4432,27 @@ function CoreSystem() {
             productActivation *
               0.07 +
             pulse *
-              0.03
+              0.03 +
+            logicProductFocus *
+              0.045 +
+            capabilityProductFocus *
+              0.04 +
+            securityApplicationFocus *
+              0.045 +
+            securityMobileFocus *
+              0.035 +
+            archiveProductFocus *
+              0.03 +
+            topologyProductFocus *
+              0.038 +
+            searchProductFocus *
+              0.018 +
+            researchProductFocus *
+              0.03 +
+            contactProductFocus *
+              0.026 +
+            contactSuccessFocus *
+              0.016
           ) *
           energy;
       }
@@ -2554,7 +4488,97 @@ function CoreSystem() {
           1.2 +
           productActivation *
             4.8 *
-            energy;
+            energy +
+          identityFocus *
+            0.7 +
+          logicProductFocus *
+            0.65 +
+          logicSecurityFocus *
+            0.3 +
+          logicInfrastructureFocus *
+            0.24 +
+          logicSignalFocus *
+            0.28 +
+          logicIntelligenceFocus *
+            0.32 +
+          capabilityProductFocus *
+            0.6 +
+          capabilitySecurityFocus *
+            0.25 +
+          capabilityInfrastructureFocus *
+            0.2 +
+          capabilitySignalFocus *
+            0.25 +
+          capabilityIntelligenceFocus *
+            0.28 +
+          securityApplicationFocus *
+            0.3 +
+          securityVulnerabilityFocus *
+            0.24 +
+          securityMobileFocus *
+            0.24 +
+          securityInfrastructureFocus *
+            0.22 +
+          securityNetworkFocus *
+            0.26 +
+          securityIntelligenceFocus *
+            0.28 +
+          archiveProductFocus *
+            0.2 +
+          archiveSecurityFocus *
+            0.15 +
+          archiveInfrastructureFocus *
+            0.12 +
+          archiveSignalFocus *
+            0.14 +
+          archiveIntelligenceFocus *
+            0.13 +
+          archiveRestrictedFocus *
+            0.2 +
+          topologyInfrastructureFocus *
+            0.28 +
+          topologySignalFocus *
+            0.22 +
+          topologySecurityFocus *
+            0.26 +
+          topologyProductFocus *
+            0.3 +
+          searchLayerSignalFocus *
+            0.12 +
+          searchInfrastructureFocus *
+            0.08 +
+          searchProductFocus *
+            0.1 +
+          searchIntelligenceFocus *
+            0.1 +
+          researchProductFocus *
+            0.1 +
+          researchSecurityFocus *
+            0.1 +
+          researchInfrastructureFocus *
+            0.08 +
+          researchSignalFocus *
+            0.1 +
+          researchIntelligenceFocus *
+            0.14 +
+          classifiedRestrictedFocus *
+            0.9 +
+          classifiedSignalFocus *
+            0.28 +
+          classifiedSecurityFocus *
+            0.24 +
+          classifiedIntelligenceFocus *
+            0.2 +
+          contactConnectionFocus *
+            0.5 +
+          contactSignalFocus *
+            0.22 +
+          contactSecurityFocus *
+            0.12 +
+          contactProductFocus *
+            0.26 +
+          contactSuccessFocus *
+            0.24;
       }
     }
   );
@@ -2973,23 +4997,39 @@ function CoreSystem() {
   );
 }
 
-export default function CoreScene() {
+type CoreSceneProps = {
+  fill?: boolean;
+};
+
+export default function CoreScene({
+  fill = false,
+}: CoreSceneProps) {
   return (
     <div
-      className="
-        relative
-        h-[320px]
-        w-full
-        min-w-0
-        overflow-hidden
-        min-[375px]:h-[350px]
-        min-[430px]:h-[390px]
-        sm:h-[440px]
-        md:h-[500px]
-        lg:h-[540px]
-        xl:h-[620px]
-        2xl:h-[690px]
-      "
+      className={
+        fill
+          ? `
+              relative
+              h-full
+              w-full
+              min-w-0
+              overflow-hidden
+            `
+          : `
+              relative
+              h-[320px]
+              w-full
+              min-w-0
+              overflow-hidden
+              min-[375px]:h-[350px]
+              min-[430px]:h-[390px]
+              sm:h-[440px]
+              md:h-[500px]
+              lg:h-[540px]
+              xl:h-[620px]
+              2xl:h-[690px]
+            `
+      }
     >
       <div
         aria-hidden="true"
