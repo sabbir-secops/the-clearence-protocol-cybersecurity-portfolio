@@ -1087,6 +1087,30 @@ function CoreSystem() {
   const logicFocusRef =
     useRef(0);
 
+  const capabilityFocusRef =
+    useRef(0);
+
+  const securityFocusRef =
+    useRef(0);
+
+  const archiveFocusRef =
+    useRef(0);
+
+  const infrastructureFocusRef =
+    useRef(0);
+
+  const searchFocusRef =
+    useRef(0);
+
+  const researchFocusRef =
+    useRef(0);
+
+  const classifiedFocusRef =
+    useRef(0);
+
+  const contactFocusRef =
+    useRef(0);
+
   const logicStageTargetRef =
     useRef(0);
 
@@ -2526,11 +2550,24 @@ function CoreSystem() {
         evolveWeight *
         0.9;
 
-      const capabilityActive =
+      const capabilityTarget =
         activeSection ===
           "capabilities"
           ? 1
           : 0;
+
+      const capabilityActive =
+        reducedMotionRef.current
+          ? capabilityTarget
+          : smoothValue(
+              capabilityFocusRef.current,
+              capabilityTarget,
+              4.2,
+              delta
+            );
+
+      capabilityFocusRef.current =
+        capabilityActive;
 
       const capabilityCluster =
         capabilityClusterRef.current;
@@ -2590,11 +2627,24 @@ function CoreSystem() {
             : 0
         );
 
-      const securityFocus =
+      const securityTarget =
         activeSection ===
           "security"
           ? 1
           : 0;
+
+      const securityFocus =
+        reducedMotionRef.current
+          ? securityTarget
+          : smoothValue(
+              securityFocusRef.current,
+              securityTarget,
+              4.2,
+              delta
+            );
+
+      securityFocusRef.current =
+        securityFocus;
 
       const securityLayer =
         securityLayerRef.current;
@@ -2662,11 +2712,24 @@ function CoreSystem() {
         securityFocus *
         securityLayerBlend.intelligence;
 
-      const infrastructureFocus =
+      const infrastructureTarget =
         activeSection ===
           "infrastructure"
           ? 1
           : 0;
+
+      const infrastructureFocus =
+        reducedMotionRef.current
+          ? infrastructureTarget
+          : smoothValue(
+              infrastructureFocusRef.current,
+              infrastructureTarget,
+              4.2,
+              delta
+            );
+
+      infrastructureFocusRef.current =
+        infrastructureFocus;
 
       const infrastructureLayer =
         infrastructureLayerRef.current;
@@ -2789,7 +2852,7 @@ function CoreSystem() {
         topologyDataFocus *
           0.2;
 
-      const intelligenceFocus =
+      const researchTarget =
         activeSection ===
           "research" ||
         activeSection ===
@@ -2797,11 +2860,37 @@ function CoreSystem() {
           ? 1
           : 0;
 
-      const signalFocus =
+      const intelligenceFocus =
+        reducedMotionRef.current
+          ? researchTarget
+          : smoothValue(
+              researchFocusRef.current,
+              researchTarget,
+              4.2,
+              delta
+            );
+
+      researchFocusRef.current =
+        intelligenceFocus;
+
+      const searchTarget =
         activeSection ===
           "search-performance"
           ? 1
           : 0;
+
+      const signalFocus =
+        reducedMotionRef.current
+          ? searchTarget
+          : smoothValue(
+              searchFocusRef.current,
+              searchTarget,
+              4.2,
+              delta
+            );
+
+      searchFocusRef.current =
+        signalFocus;
 
       const searchLayer =
         searchLayerRef.current;
@@ -3032,11 +3121,24 @@ function CoreSystem() {
             0.24
         );
 
-      const classifiedActive =
+      const classifiedTarget =
         activeSection ===
           "classified"
           ? 1
           : 0;
+
+      const classifiedActive =
+        reducedMotionRef.current
+          ? classifiedTarget
+          : smoothValue(
+              classifiedFocusRef.current,
+              classifiedTarget,
+              4.6,
+              delta
+            );
+
+      classifiedFocusRef.current =
+        classifiedActive;
 
       const classifiedState =
         classifiedStateRef.current;
@@ -3127,11 +3229,24 @@ function CoreSystem() {
             0.16
         );
 
-      const contactActive =
+      const contactTarget =
         activeSection ===
           "contact"
           ? 1
           : 0;
+
+      const contactActive =
+        reducedMotionRef.current
+          ? contactTarget
+          : smoothValue(
+              contactFocusRef.current,
+              contactTarget,
+              3.8,
+              delta
+            );
+
+      contactFocusRef.current =
+        contactActive;
 
       const contactState =
         contactStateRef.current;
@@ -3269,11 +3384,24 @@ function CoreSystem() {
             0.06
         );
 
-      const projectFocus =
+      const archiveTarget =
         activeSection ===
           "archive"
           ? 1
           : 0;
+
+      const projectFocus =
+        reducedMotionRef.current
+          ? archiveTarget
+          : smoothValue(
+              archiveFocusRef.current,
+              archiveTarget,
+              4.2,
+              delta
+            );
+
+      archiveFocusRef.current =
+        projectFocus;
 
       const archiveProject =
         archiveProjectRef.current;

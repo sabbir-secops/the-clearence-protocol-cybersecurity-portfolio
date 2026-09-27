@@ -355,6 +355,9 @@ export default function SystemEnvironment({
         .systemSection ??
       "hero";
 
+    let hasDispatchedCurrent =
+      false;
+
     const update =
       () => {
         frame = 0;
@@ -503,10 +506,14 @@ export default function SystemEnvironment({
 
         if (
           currentId !==
-          definition.id
+            definition.id ||
+          !hasDispatchedCurrent
         ) {
           currentId =
             definition.id;
+
+          hasDispatchedCurrent =
+            true;
 
           root.dataset
             .systemSection =
