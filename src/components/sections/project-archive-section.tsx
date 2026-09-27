@@ -726,7 +726,7 @@ export default function ProjectArchiveSection() {
                           restricted
                             ? active
                               ? `
-                                scale-[1.012]
+                                sm:scale-[1.012]
                                 border-amber-300/45
                                 bg-amber-300/[0.075]
                                 shadow-[0_18px_48px_rgba(0,0,0,0.24),0_0_45px_rgba(255,184,77,0.07)]
@@ -734,13 +734,13 @@ export default function ProjectArchiveSection() {
                               : `
                                 border-amber-300/20
                                 bg-amber-300/[0.025]
-                                hover:-translate-y-1
+                                sm:hover:-translate-y-1
                                 hover:border-amber-300/40
                                 hover:bg-amber-300/[0.05]
                               `
                             : active
                               ? `
-                                scale-[1.012]
+                                sm:scale-[1.012]
                                 border-cyan-300/40
                                 bg-cyan-300/[0.075]
                                 shadow-[0_18px_48px_rgba(0,0,0,0.24),0_0_45px_rgba(72,215,255,0.07)]
@@ -748,7 +748,7 @@ export default function ProjectArchiveSection() {
                               : `
                                 border-white/[0.11]
                                 bg-[#0d141b]
-                                hover:-translate-y-1
+                                sm:hover:-translate-y-1
                                 hover:border-cyan-300/25
                                 hover:bg-[#101920]
                               `

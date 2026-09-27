@@ -597,7 +597,7 @@ export default function ResearchIntelligenceSection() {
                       ${
                         active
                           ? `
-                            scale-[1.015]
+                            sm:scale-[1.015]
                             border-violet-300/45
                             bg-violet-300/[0.075]
                             shadow-[0_16px_44px_rgba(0,0,0,0.24),0_0_42px_rgba(120,109,255,0.09)]
@@ -605,7 +605,7 @@ export default function ResearchIntelligenceSection() {
                           : `
                             border-white/[0.11]
                             bg-[#0d141b]
-                            hover:-translate-y-1
+                            sm:hover:-translate-y-1
                             hover:border-cyan-300/25
                             hover:bg-[#101920]
                           `

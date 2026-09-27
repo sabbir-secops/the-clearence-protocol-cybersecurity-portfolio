@@ -134,6 +134,11 @@ export default function PersistentSystemCore({
   ] = useState(false);
 
   const [
+    compactViewport,
+    setCompactViewport,
+  ] = useState(false);
+
+  const [
     motionScale,
     setMotionScale,
   ] = useState(1);
@@ -145,6 +150,11 @@ export default function PersistentSystemCore({
     const mediaQuery =
       window.matchMedia(
         "(prefers-reduced-motion: reduce)"
+      );
+
+    const compactQuery =
+      window.matchMedia(
+        "(max-width: 767px)"
       );
 
     const applyReducedMotion =
@@ -162,6 +172,16 @@ export default function PersistentSystemCore({
           MediaQueryListEvent
       ) => {
         applyReducedMotion(
+          event.matches
+        );
+      };
+
+    const handleCompactChange =
+      (
+        event:
+          MediaQueryListEvent
+      ) => {
+        setCompactViewport(
           event.matches
         );
       };
@@ -232,9 +252,23 @@ export default function PersistentSystemCore({
       mediaQuery.matches
     );
 
+    const compactInitFrame =
+      window.requestAnimationFrame(
+        () => {
+          setCompactViewport(
+            compactQuery.matches
+          );
+        }
+      );
+
     mediaQuery.addEventListener(
       "change",
       handleMediaChange
+    );
+
+    compactQuery.addEventListener(
+      "change",
+      handleCompactChange
     );
 
     window.addEventListener(
@@ -259,9 +293,18 @@ export default function PersistentSystemCore({
     );
 
     return () => {
+      window.cancelAnimationFrame(
+        compactInitFrame
+      );
+
       mediaQuery.removeEventListener(
         "change",
         handleMediaChange
+      );
+
+      compactQuery.removeEventListener(
+        "change",
+        handleCompactChange
       );
 
       window.removeEventListener(
@@ -400,13 +443,38 @@ export default function PersistentSystemCore({
   const isHero =
     activeId === "hero";
 
+  const performanceOpacity =
+    motionScale < 0.55
+      ? 0.72
+      : 1;
+
+  const compactOpacity =
+    compactViewport
+      ? 0.72
+      : 1;
+
   const ambientOpacity =
     ambient.opacity *
-    (
-      motionScale < 0.55
-        ? 0.72
-        : 1
-    );
+    performanceOpacity *
+    compactOpacity;
+
+  const ambientWidth =
+    compactViewport
+      ? "clamp(210px, 70vw, 420px)"
+      : ambient.width;
+
+  const ambientX =
+    compactViewport
+      ? "50vw"
+      : ambient.x;
+
+  const ambientY =
+    compactViewport
+      ? activeId ===
+        "classified"
+        ? "52vh"
+        : "56vh"
+      : ambient.y;
 
   return (
     <div
@@ -456,11 +524,11 @@ export default function PersistentSystemCore({
               }
             : {
                 left:
-                  ambient.x,
+                  ambientX,
                 top:
-                  ambient.y,
+                  ambientY,
                 width:
-                  ambient.width,
+                  ambientWidth,
                 aspectRatio:
                   "1 / 1",
                 opacity:
