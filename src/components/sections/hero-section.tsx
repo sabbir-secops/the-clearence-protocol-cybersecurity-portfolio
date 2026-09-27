@@ -1588,7 +1588,11 @@ export default function HeroSection({
 
 
 
-            md:min-h-[540px]
+            md:min-h-[500px]
+
+
+
+            lg:min-h-[540px]
 
 
 

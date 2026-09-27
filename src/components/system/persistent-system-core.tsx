@@ -139,6 +139,11 @@ export default function PersistentSystemCore({
   ] = useState(false);
 
   const [
+    tabletViewport,
+    setTabletViewport,
+  ] = useState(false);
+
+  const [
     motionScale,
     setMotionScale,
   ] = useState(1);
@@ -155,6 +160,11 @@ export default function PersistentSystemCore({
     const compactQuery =
       window.matchMedia(
         "(max-width: 767px), (orientation: landscape) and (max-width: 900px) and (max-height: 430px)"
+      );
+
+    const tabletQuery =
+      window.matchMedia(
+        "(min-width: 768px) and (max-width: 1279px) and not ((orientation: landscape) and (max-height: 430px))"
       );
 
     const applyReducedMotion =
@@ -182,6 +192,16 @@ export default function PersistentSystemCore({
           MediaQueryListEvent
       ) => {
         setCompactViewport(
+          event.matches
+        );
+      };
+
+    const handleTabletChange =
+      (
+        event:
+          MediaQueryListEvent
+      ) => {
+        setTabletViewport(
           event.matches
         );
       };
@@ -252,11 +272,15 @@ export default function PersistentSystemCore({
       mediaQuery.matches
     );
 
-    const compactInitFrame =
+    const viewportInitFrame =
       window.requestAnimationFrame(
         () => {
           setCompactViewport(
             compactQuery.matches
+          );
+
+          setTabletViewport(
+            tabletQuery.matches
           );
         }
       );
@@ -269,6 +293,11 @@ export default function PersistentSystemCore({
     compactQuery.addEventListener(
       "change",
       handleCompactChange
+    );
+
+    tabletQuery.addEventListener(
+      "change",
+      handleTabletChange
     );
 
     window.addEventListener(
@@ -294,7 +323,7 @@ export default function PersistentSystemCore({
 
     return () => {
       window.cancelAnimationFrame(
-        compactInitFrame
+        viewportInitFrame
       );
 
       mediaQuery.removeEventListener(
@@ -305,6 +334,11 @@ export default function PersistentSystemCore({
       compactQuery.removeEventListener(
         "change",
         handleCompactChange
+      );
+
+      tabletQuery.removeEventListener(
+        "change",
+        handleTabletChange
       );
 
       window.removeEventListener(
@@ -448,25 +482,48 @@ export default function PersistentSystemCore({
       ? 0.72
       : 1;
 
-  const compactOpacity =
+  const viewportOpacity =
     compactViewport
       ? 0.72
-      : 1;
+      : tabletViewport
+        ? 0.84
+        : 1;
 
   const ambientOpacity =
     ambient.opacity *
     performanceOpacity *
-    compactOpacity;
+    viewportOpacity;
 
   const ambientWidth =
     compactViewport
       ? "clamp(210px, min(70vw, 88vh), 390px)"
-      : ambient.width;
+      : tabletViewport
+        ? "clamp(250px, 40vw, 460px)"
+        : ambient.width;
+
+  const tabletX =
+    activeId ===
+    "search-performance"
+      ? "42vw"
+      : activeId ===
+          "identity" ||
+          activeId ===
+            "capabilities" ||
+          activeId ===
+            "archive" ||
+          activeId ===
+            "infrastructure" ||
+          activeId ===
+            "research"
+        ? "58vw"
+        : "50vw";
 
   const ambientX =
     compactViewport
       ? "50vw"
-      : ambient.x;
+      : tabletViewport
+        ? tabletX
+        : ambient.x;
 
   const ambientY =
     compactViewport
