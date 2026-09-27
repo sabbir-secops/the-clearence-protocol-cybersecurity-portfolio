@@ -154,7 +154,7 @@ export default function PersistentSystemCore({
 
     const compactQuery =
       window.matchMedia(
-        "(max-width: 767px), (orientation: landscape) and (max-height: 500px) and (max-width: 900px)"
+        "(max-width: 767px), (orientation: landscape) and (max-width: 900px) and (max-height: 430px)"
       );
 
     const applyReducedMotion =
@@ -460,7 +460,7 @@ export default function PersistentSystemCore({
 
   const ambientWidth =
     compactViewport
-      ? "clamp(210px, min(70vw, 72vh), 420px)"
+      ? "clamp(210px, min(70vw, 88vh), 390px)"
       : ambient.width;
 
   const ambientX =

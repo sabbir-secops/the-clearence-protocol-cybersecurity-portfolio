@@ -847,6 +847,136 @@ select:focus-visible {
   }
 }
 
+@media (
+  orientation: landscape
+) and (
+  min-width: 600px
+) and (
+  max-width: 900px
+) and (
+  max-height: 430px
+) {
+  .section-spacing {
+    padding:
+      56px
+      0;
+  }
+
+  #hero {
+    padding-top:
+      64px;
+
+    padding-bottom:
+      24px;
+  }
+
+  #hero > .hero-layout {
+    grid-template-columns:
+      minmax(0, 0.9fr)
+      minmax(0, 1.1fr);
+
+    align-items:
+      center;
+
+    column-gap:
+      12px;
+
+    row-gap:
+      8px;
+  }
+
+  #hero .hero-clearance-label {
+    margin-bottom:
+      10px;
+  }
+
+  #hero .hero-title {
+    font-size:
+      clamp(
+        30px,
+        5.1vw,
+        42px
+      ) !important;
+
+    line-height:
+      0.94;
+  }
+
+  #hero .hero-description {
+    margin-top:
+      12px;
+
+    max-width:
+      360px;
+
+    font-size:
+      14px;
+
+    line-height:
+      1.5;
+  }
+
+  #hero .hero-actions {
+    margin-top:
+      14px;
+
+    gap:
+      8px;
+  }
+
+  #hero .primary-btn,
+  #hero .secondary-btn {
+    min-height:
+      42px;
+
+    padding-inline:
+      14px;
+
+    font-size:
+      10px;
+  }
+
+  #hero .hero-domain-list {
+    margin-top:
+      14px;
+
+    column-gap:
+      10px;
+
+    row-gap:
+      6px;
+  }
+
+  #hero .hero-domain-list .tiny-mono {
+    font-size:
+      9px;
+
+    letter-spacing:
+      0.07em;
+  }
+
+  #system-core-anchor {
+    min-height:
+      280px !important;
+  }
+
+  #hero .hero-persistent-core-space {
+    min-height:
+      250px !important;
+  }
+
+  #hero .hero-mobile-status {
+    grid-column:
+      1 / -1;
+
+    gap:
+      12px;
+
+    padding-top:
+      12px;
+  }
+}
+
 /* =========================================================
    ULTRAWIDE
 ========================================================= */
