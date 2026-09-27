@@ -168,7 +168,8 @@ function getLayer(
 function getNodePosition(
   angle: number
 ) {
-  const radius = 36;
+  const horizontalRadius = 28;
+  const verticalRadius = 36;
 
   const rad =
     (angle * Math.PI) / 180;
@@ -176,11 +177,13 @@ function getNodePosition(
   return {
     left: `${
       50 +
-      Math.cos(rad) * radius
+      Math.cos(rad) *
+        horizontalRadius
     }%`,
     top: `${
       50 +
-      Math.sin(rad) * radius
+      Math.sin(rad) *
+        verticalRadius
     }%`,
   };
 }
@@ -268,11 +271,9 @@ export default function SecurityDomainSection() {
         gsap.from(
           ".security-layer-node",
           {
-            y: 22,
-            scale: 0.96,
-            duration: 0.6,
-            stagger: 0.05,
-            ease: "power3.out",
+            autoAlpha: 0,
+            duration: 0.45,
+            ease: "power2.out",
 
             scrollTrigger: {
               trigger:

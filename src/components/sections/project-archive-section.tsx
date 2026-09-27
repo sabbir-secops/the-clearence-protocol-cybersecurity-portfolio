@@ -312,11 +312,9 @@ export default function ProjectArchiveSection() {
         gsap.from(
           ".archive-node",
           {
-            y: 22,
-            scale: 0.98,
-            duration: 0.6,
-            stagger: 0.05,
-            ease: "power3.out",
+            autoAlpha: 0,
+            duration: 0.45,
+            ease: "power2.out",
 
             scrollTrigger: {
               trigger:

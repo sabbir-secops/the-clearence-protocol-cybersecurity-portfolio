@@ -97,8 +97,8 @@ const capabilityClusters: CapabilityCluster[] = [
       "search",
     ],
     position: {
-      left: "17%",
-      top: "32%",
+      left: "24%",
+      top: "31%",
     },
   },
   {
@@ -126,8 +126,8 @@ const capabilityClusters: CapabilityCluster[] = [
       "research",
     ],
     position: {
-      left: "83%",
-      top: "32%",
+      left: "76%",
+      top: "31%",
     },
   },
   {
@@ -159,7 +159,7 @@ const capabilityClusters: CapabilityCluster[] = [
     ],
     position: {
       left: "50%",
-      top: "82%",
+      top: "86%",
     },
   },
   {
@@ -187,8 +187,8 @@ const capabilityClusters: CapabilityCluster[] = [
       "research",
     ],
     position: {
-      left: "20%",
-      top: "68%",
+      left: "24%",
+      top: "69%",
     },
   },
   {
@@ -214,8 +214,8 @@ const capabilityClusters: CapabilityCluster[] = [
       "search",
     ],
     position: {
-      left: "80%",
-      top: "68%",
+      left: "76%",
+      top: "69%",
     },
   },
 ];
@@ -378,11 +378,9 @@ export default function CapabilityNetworkSection() {
         gsap.from(
           ".capability-node",
           {
-            y: 20,
-            scale: 0.97,
-            duration: 0.55,
-            stagger: 0.04,
-            ease: "power3.out",
+            autoAlpha: 0,
+            duration: 0.45,
+            ease: "power2.out",
 
             scrollTrigger: {
               trigger:

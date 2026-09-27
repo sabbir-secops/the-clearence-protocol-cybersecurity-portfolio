@@ -302,11 +302,9 @@ export default function ResearchIntelligenceSection() {
         gsap.from(
           ".research-node",
           {
-            y: 22,
-            scale: 0.97,
-            duration: 0.6,
-            stagger: 0.045,
-            ease: "power3.out",
+            autoAlpha: 0,
+            duration: 0.45,
+            ease: "power2.out",
 
             scrollTrigger: {
               trigger:
