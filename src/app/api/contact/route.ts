@@ -1,4 +1,10 @@
 import {
+  createHash,
+} from "node:crypto";
+import {
+  isIP,
+} from "node:net";
+import {
   NextResponse,
 } from "next/server";
 
@@ -61,11 +67,17 @@ const SITE_ORIGIN = [
 const FORM_PAGE_URL =
   `${SITE_ORIGIN}/#contact`;
 
-const RATE_WINDOW_MS =
+const IP_RATE_WINDOW_MS =
   10 * 60 * 1000;
 
-const RATE_LIMIT =
+const IP_RATE_LIMIT =
   5;
+
+const EMAIL_RATE_WINDOW_MS =
+  15 * 60 * 1000;
+
+const EMAIL_RATE_LIMIT =
+  4;
 
 const MAX_BODY_BYTES =
   16000;
@@ -107,34 +119,81 @@ function normalizeText(
     .trim();
 }
 
-function getClientKey(
+function normalizeIp(
+  value: string | null
+) {
+  if (!value) {
+    return "";
+  }
+
+  const candidate =
+    value.trim();
+
+  return isIP(
+    candidate
+  )
+    ? candidate
+    : "";
+}
+
+function getClientAddress(
   request: Request
 ) {
+  const realIp =
+    normalizeIp(
+      request.headers.get(
+        "x-real-ip"
+      )
+    );
+
+  if (realIp) {
+    return realIp;
+  }
+
   const forwarded =
     request.headers.get(
       "x-forwarded-for"
     );
 
   if (forwarded) {
-    const firstAddress =
+    const candidates =
       forwarded
-        .split(",")[0]
-        ?.trim();
+        .split(",")
+        .map(
+          (value) =>
+            normalizeIp(
+              value
+            )
+        )
+        .filter(Boolean);
 
-    if (firstAddress) {
-      return firstAddress;
+    if (
+      candidates.length >
+      0
+    ) {
+      return candidates[0];
     }
   }
 
-  const realIp =
-    request.headers.get(
-      "x-real-ip"
-    )?.trim();
+  return "unknown";
+}
 
-  return (
-    realIp ||
-    "unknown"
-  );
+function makeRateKey(
+  scope: "ip" | "email",
+  value: string
+) {
+  const digest =
+    createHash(
+      "sha256"
+    )
+      .update(
+        value
+      )
+      .digest(
+        "hex"
+      );
+
+  return `${scope}:${digest}`;
 }
 
 function cleanupRateStore(
@@ -164,8 +223,10 @@ function cleanupRateStore(
   }
 }
 
-function isRateLimited(
-  key: string
+function consumeRateLimit(
+  key: string,
+  limit: number,
+  windowMs: number
 ) {
   const now =
     Date.now();
@@ -190,18 +251,38 @@ function isRateLimited(
         count: 1,
         resetAt:
           now +
-          RATE_WINDOW_MS,
+          windowMs,
       }
     );
 
-    return false;
+    return {
+      limited: false,
+      retryAfterSeconds:
+        Math.ceil(
+          windowMs /
+          1000
+        ),
+    };
   }
 
   if (
     existing.count >=
-    RATE_LIMIT
+    limit
   ) {
-    return true;
+    return {
+      limited: true,
+      retryAfterSeconds:
+        Math.max(
+          1,
+          Math.ceil(
+            (
+              existing.resetAt -
+              now
+            ) /
+              1000
+          )
+        ),
+    };
   }
 
   existing.count +=
@@ -212,7 +293,20 @@ function isRateLimited(
     existing
   );
 
-  return false;
+  return {
+    limited: false,
+    retryAfterSeconds:
+      Math.max(
+        1,
+        Math.ceil(
+          (
+            existing.resetAt -
+            now
+          ) /
+            1000
+        )
+      ),
+  };
 }
 
 function isSameOrigin(
@@ -241,7 +335,10 @@ function isSameOrigin(
     );
 
   if (!origin) {
-    return true;
+    return (
+      process.env.NODE_ENV !==
+      "production"
+    );
   }
 
   const forwardedHost =
@@ -289,6 +386,8 @@ function json(
       headers: {
         "Cache-Control":
           "no-store",
+        "X-Robots-Tag":
+          "noindex, nofollow, noarchive",
         ...headers,
       },
     }
@@ -372,15 +471,23 @@ export async function POST(
     );
   }
 
-  const clientKey =
-    getClientKey(
+  const clientAddress =
+    getClientAddress(
       request
     );
 
+  const ipRate =
+    consumeRateLimit(
+      makeRateKey(
+        "ip",
+        clientAddress
+      ),
+      IP_RATE_LIMIT,
+      IP_RATE_WINDOW_MS
+    );
+
   if (
-    isRateLimited(
-      clientKey
-    )
+    ipRate.limited
   ) {
     return json(
       {
@@ -392,7 +499,9 @@ export async function POST(
       429,
       {
         "Retry-After":
-          "600",
+          String(
+            ipRate.retryAfterSeconds
+          ),
       }
     );
   }
@@ -541,6 +650,36 @@ export async function POST(
             "Invalid message length.",
         },
         400
+      );
+    }
+
+    const emailRate =
+      consumeRateLimit(
+        makeRateKey(
+          "email",
+          email.toLowerCase()
+        ),
+        EMAIL_RATE_LIMIT,
+        EMAIL_RATE_WINDOW_MS
+      );
+
+    if (
+      emailRate.limited
+    ) {
+      return json(
+        {
+          success:
+            false,
+          message:
+            "Too many requests. Please try again later.",
+        },
+        429,
+        {
+          "Retry-After":
+            String(
+              emailRate.retryAfterSeconds
+            ),
+        }
       );
     }
 
