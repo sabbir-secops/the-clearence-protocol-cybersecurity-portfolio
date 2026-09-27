@@ -896,7 +896,7 @@ export default function ContactSection() {
         () => {
           controller.abort();
         },
-        15000
+        18000
       );
     try {
       const response =
@@ -975,7 +975,14 @@ export default function ContactSection() {
           }
         )
       );
-    } catch {
+    } catch (
+      error
+    ) {
+      const isAbort =
+        error instanceof
+          Error &&
+        error.name ===
+          "AbortError";
       setFormStatus(
         "error"
       );
@@ -985,7 +992,9 @@ export default function ContactSection() {
           {
             detail: {
               message:
-                "Message transmission failed. Please retry.",
+                isAbort
+                  ? "Message transmission timed out. Please retry."
+                  : "Message transmission failed. Please retry.",
             },
           }
         )

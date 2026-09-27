@@ -27,6 +27,20 @@ type RateStoreGlobal =
     >;
   };
 
+function isContactPayload(
+  value: unknown
+): value is ContactPayload {
+  return (
+    typeof value ===
+      "object" &&
+    value !==
+      null &&
+    !Array.isArray(
+      value
+    )
+  );
+}
+
 const FORM_DESTINATION =
   "contact@buildwithsabbir.com";
 
@@ -409,15 +423,14 @@ export async function POST(
       );
     }
 
-    let body:
-      ContactPayload;
+    let parsedBody:
+      unknown;
 
     try {
-      body =
+      parsedBody =
         JSON.parse(
           rawBody
-        ) as
-          ContactPayload;
+        );
     } catch {
       return json(
         {
@@ -429,6 +442,25 @@ export async function POST(
         400
       );
     }
+
+    if (
+      !isContactPayload(
+        parsedBody
+      )
+    ) {
+      return json(
+        {
+          success:
+            false,
+          message:
+            "Invalid request body.",
+        },
+        400
+      );
+    }
+
+    const body =
+      parsedBody;
 
     const identity =
       normalizeText(
