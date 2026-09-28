@@ -8,6 +8,8 @@ import {
   useState,
 } from "react";
 
+import Link from "next/link";
+
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -31,12 +33,14 @@ type ProjectNode = {
   role: string;
   focus: string[];
   signals: string[];
+  slug?: string;
   classified?: boolean;
 };
 
 const projects: ProjectNode[] = [
   {
     id: "hostsecual",
+    slug: "hostsecual",
     code: "H-01",
     name: "HostSecual",
     type: "Security First Infrastructure",
@@ -66,6 +70,7 @@ const projects: ProjectNode[] = [
   },
   {
     id: "aged",
+    slug: "aged",
     code: "A-02",
     name: "AGED Application System",
     type: "Multi Role Product Engineering",
@@ -95,6 +100,7 @@ const projects: ProjectNode[] = [
   },
   {
     id: "leemeo",
+    slug: "leemeo",
     code: "L-03",
     name: "Leemeo",
     type: "Digital Technology and Operations",
@@ -120,6 +126,7 @@ const projects: ProjectNode[] = [
   },
   {
     id: "softparallax",
+    slug: "softparallax",
     code: "SP-04",
     name: "SoftParallax",
     type: "Web, Search and Digital Engineering",
@@ -148,6 +155,7 @@ const projects: ProjectNode[] = [
   },
   {
     id: "security-labs",
+    slug: "security-labs",
     code: "R-05",
     name: "Security Labs",
     type: "Assessment, Research and Experimentation",
@@ -1635,7 +1643,7 @@ export default function ProjectArchiveSection() {
                         "
                       >
                         <p className="tiny-mono">
-                          Case Study | Locked
+                          Case Study | Available
                         </p>
 
                         <p
@@ -1647,26 +1655,51 @@ export default function ProjectArchiveSection() {
                             text-[#a8b4bd]
                           "
                         >
-                          Architecture and
-                          deeper evidence will
-                          open from this node.
+                          Architecture,
+                          decisions, workflow
+                          and public evidence
+                          are available in the
+                          technical case file.
                         </p>
                       </div>
 
-                      <button
-                        type="button"
-                        disabled
-                        className="
-                          secondary-btn
-                          w-full
-                          cursor-default
-                          disabled:opacity-60
+                      {activeData.slug ? (
+                        <Link
+                          href={`/archive/${activeData.slug}`}
+                          className="
+                            secondary-btn
+                            w-full
+                            outline-none
+                            focus-visible:ring-2
+                            focus-visible:ring-cyan-300/70
+                            focus-visible:ring-offset-2
+                            focus-visible:ring-offset-[#0b1016]
 
-                          sm:w-auto
-                        "
-                      >
-                        Deep Dive Soon
-                      </button>
+                            sm:w-auto
+                          "
+                        >
+                          Enter Deep Dive
+                          <span
+                            aria-hidden="true"
+                            className="ml-2"
+                          >
+                            →
+                          </span>
+                        </Link>
+                      ) : (
+                        <span
+                          className="
+                            tiny-mono
+                            rounded-full
+                            border
+                            border-white/[0.10]
+                            px-4
+                            py-3
+                          "
+                        >
+                          Case File Pending
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

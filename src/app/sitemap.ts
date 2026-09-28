@@ -2,6 +2,10 @@ import type {
   MetadataRoute,
 } from "next";
 
+import {
+  caseStudies,
+} from "@/data/case-studies";
+
 function getSiteOrigin() {
   const rawValue =
     process.env
@@ -44,5 +48,15 @@ export default function sitemap():
       url:
         siteOrigin,
     },
+    ...caseStudies.map(
+      (
+        caseStudy
+      ) => ({
+        url:
+          `${siteOrigin}/archive/${caseStudy.slug}`,
+      })
+    ),
   ];
 }
+
+
