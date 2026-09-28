@@ -452,6 +452,9 @@ function ConnectionCard({
       onPointerLeave={
         resetPointerEffect
       }
+      onPointerCancel={
+        resetPointerEffect
+      }
       className="
         contact-channel-surface
         relative
@@ -951,7 +954,7 @@ export default function ContactSection() {
               detail: {
                 message:
                   activationRequired
-                    ? "Form activation is required. Check the destination email inbox and spam folder."
+                    ? "The contact endpoint is awaiting activation. Please use the email channel in the meantime."
                     : result?.message ||
                       "Message transmission failed. Please retry.",
               },
@@ -1307,30 +1310,6 @@ export default function ContactSection() {
                 />
               </label>
             </div>
-            <input
-              type="hidden"
-              name="_subject"
-              value="Portfolio Contact | Build With Sabbir"
-            />
-            <input
-              type="hidden"
-              name="_template"
-              value="table"
-            />
-            <input
-              type="hidden"
-              name="_captcha"
-              value="false"
-            />
-            <input
-              type="hidden"
-              name="_url"
-              value={[
-                "https:",
-                "",
-                "buildwithsabbir.com",
-              ].join("/")}
-            />
             <div
               className="
                 grid
@@ -1546,7 +1525,7 @@ export default function ContactSection() {
                         text-[#8f9ca5]
                       "
                     >
-                      Check contact@buildwithsabbir.com and confirm the FormSubmit activation email.
+                      The contact endpoint is awaiting activation. Please use the email channel in the meantime.
                     </p>
                   </>
                 ) : formStatus ===

@@ -29,6 +29,9 @@ export default function IdentitySection() {
   const visualRef =
     useRef<HTMLDivElement | null>(null);
 
+  const motionRef =
+    useRef<HTMLDivElement | null>(null);
+
   const photoPlaneRef =
     useRef<HTMLDivElement | null>(null);
 
@@ -203,10 +206,10 @@ export default function IdentitySection() {
           }
 
           if (
-            visualRef.current
+            motionRef.current
           ) {
             gsap.to(
-              visualRef.current,
+              motionRef.current,
               {
                 y: -10,
                 scrollTrigger: {
@@ -244,9 +247,6 @@ export default function IdentitySection() {
       const photoPlane =
         photoPlaneRef.current;
 
-      const depthField =
-        depthFieldRef.current;
-
       if (visual) {
         visual.style.transform =
           "perspective(1200px) rotateX(0deg) rotateY(0deg)";
@@ -255,11 +255,6 @@ export default function IdentitySection() {
       if (photoPlane) {
         photoPlane.style.transform =
           "translate3d(0px, 0px, 34px) scale(1)";
-      }
-
-      if (depthField) {
-        depthField.style.transform =
-          "translate3d(0px, 0px, -26px) rotate(0deg)";
       }
     };
 
@@ -282,13 +277,9 @@ export default function IdentitySection() {
       const photoPlane =
         photoPlaneRef.current;
 
-      const depthField =
-        depthFieldRef.current;
-
       if (
         !visual ||
-        !photoPlane ||
-        !depthField
+        !photoPlane
       ) {
         return;
       }
@@ -329,9 +320,6 @@ export default function IdentitySection() {
 
       photoPlane.style.transform =
         `translate3d(${(x * 7).toFixed(2)}px, ${(y * 5).toFixed(2)}px, 38px) scale(1.012)`;
-
-      depthField.style.transform =
-        `translate3d(${(x * -5).toFixed(2)}px, ${(y * -4).toFixed(2)}px, -26px) rotate(${(x * -3).toFixed(2)}deg)`;
     };
 
   return (
@@ -471,6 +459,27 @@ export default function IdentitySection() {
               infrastructure,
               security and
               performance.
+            </p>
+
+            <p
+              className="
+                identity-reveal
+                text-[16px]
+                leading-7
+                text-[#a8b4bd]
+
+                sm:text-[17px]
+                sm:leading-8
+              "
+            >
+              My security work spans
+              ethical hacking,
+              penetration testing and
+              application security,
+              with a focus on web and
+              API security,
+              vulnerability assessment
+              and secure access control.
             </p>
 
             <p
@@ -636,6 +645,7 @@ export default function IdentitySection() {
             </div>
 
             <div
+              ref={motionRef}
               className="
                 relative
                 mb-8
@@ -744,7 +754,8 @@ export default function IdentitySection() {
                 >
                   <Image
                     src="/images/owner.webp"
-                    alt="Md. Sabbir Hossain, Cybersecurity Product Engineer"
+                    alt=""
+                    aria-hidden="true"
                     fill
                     sizes="
                       (max-width: 639px) calc(100vw - 40px),
@@ -785,8 +796,7 @@ export default function IdentitySection() {
                   >
                     <Image
                       src="/images/owner.webp"
-                      alt=""
-                      aria-hidden="true"
+                      alt="Md. Sabbir Hossain, Cybersecurity Product Engineer"
                       fill
                       sizes="
                         (max-width: 639px) calc(100vw - 56px),

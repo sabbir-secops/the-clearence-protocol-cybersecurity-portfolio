@@ -356,6 +356,17 @@ export default function ProjectArchiveSection() {
       id !==
       "classified"
     ) {
+      timeoutRefs.current.forEach(
+        (timeout) => {
+          window.clearTimeout(
+            timeout
+          );
+        }
+      );
+
+      timeoutRefs.current =
+        [];
+
       setDecrypting(false);
       setPartialSignals([]);
     }
@@ -719,6 +730,11 @@ export default function ProjectArchiveSection() {
                         text-left
                         transition
                         duration-300
+                        focus-visible:outline-none
+                        focus-visible:ring-2
+                        focus-visible:ring-cyan-300/70
+                        focus-visible:ring-offset-2
+                        focus-visible:ring-offset-[#090e13]
 
                         sm:min-h-[220px]
 
@@ -908,6 +924,7 @@ export default function ProjectArchiveSection() {
                           </span>
 
                           <span
+                            aria-hidden="true"
                             className={`
                               shrink-0
                               text-lg
@@ -1217,6 +1234,10 @@ export default function ProjectArchiveSection() {
                     </p>
 
                     <div
+                      aria-live="polite"
+                      aria-busy={
+                        decrypting
+                      }
                       className="
                         mt-4
                         min-h-[120px]
@@ -1320,6 +1341,11 @@ export default function ProjectArchiveSection() {
                       text-amber-100
                       uppercase
                       transition
+                      focus-visible:outline-none
+                      focus-visible:ring-2
+                      focus-visible:ring-amber-300/70
+                      focus-visible:ring-offset-2
+                      focus-visible:ring-offset-[#13110d]
 
                       hover:border-amber-300/55
                       hover:bg-amber-300/[0.10]
@@ -1629,10 +1655,12 @@ export default function ProjectArchiveSection() {
 
                       <button
                         type="button"
+                        disabled
                         className="
                           secondary-btn
                           w-full
                           cursor-default
+                          disabled:opacity-60
 
                           sm:w-auto
                         "

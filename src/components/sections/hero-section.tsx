@@ -1176,6 +1176,40 @@ export default function HeroSection({
 
 
 
+          <p
+
+            className="
+
+              mt-4
+
+              max-w-[760px]
+
+              font-mono
+
+              text-[10px]
+
+              font-medium
+
+              tracking-[0.09em]
+
+              text-cyan-200/85
+
+              uppercase
+
+              sm:text-[11px]
+
+            "
+
+          >
+
+            Ethical Hacking | Penetration Testing |
+
+            Application Security | Security Research
+
+          </p>
+
+
+
           <div
 
 

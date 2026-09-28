@@ -46,6 +46,22 @@ type SoundChangeDetail = {
 
 
 
+type SystemSectionDetail = {
+
+  id: string;
+
+};
+
+
+
+type SystemProgressDetail = {
+
+  pageProgress: number;
+
+};
+
+
+
 const sections: SectionItem[] = [
 
   {
@@ -424,39 +440,47 @@ export default function Navbar() {
 
   useEffect(() => {
 
-    const updateProgress =
+    const handleSectionChange =
 
-      () => {
+      (
 
-        const root =
+        event: Event
 
-          document.documentElement;
+      ) => {
+
+        const customEvent =
+
+          event as CustomEvent<SystemSectionDetail>;
 
 
 
-        const scrollable =
+        const id =
 
-          root.scrollHeight -
-
-          window.innerHeight;
+          customEvent.detail?.id;
 
 
 
         if (
 
-          scrollable <=
+          typeof id !==
 
-          0
+            "string" ||
+
+          !sections.some(
+
+            (
+
+              section
+
+            ) =>
+
+              section.id ===
+
+              id
+
+          )
 
         ) {
-
-          setScrollProgress(
-
-            0
-
-          );
-
-
 
           return;
 
@@ -464,11 +488,55 @@ export default function Navbar() {
 
 
 
-        const progress =
+        setActiveSection(
 
-          window.scrollY /
+          id
 
-          scrollable;
+        );
+
+      };
+
+
+
+    const handleProgress =
+
+      (
+
+        event: Event
+
+      ) => {
+
+        const customEvent =
+
+          event as CustomEvent<SystemProgressDetail>;
+
+
+
+        const pageProgress =
+
+          customEvent.detail
+
+            ?.pageProgress;
+
+
+
+        if (
+
+          typeof pageProgress !==
+
+            "number" ||
+
+          !Number.isFinite(
+
+            pageProgress
+
+          )
+
+        ) {
+
+          return;
+
+        }
 
 
 
@@ -478,7 +546,7 @@ export default function Navbar() {
 
             Math.max(
 
-              progress,
+              pageProgress,
 
               0
 
@@ -494,21 +562,11 @@ export default function Navbar() {
 
 
 
-    updateProgress();
-
-
-
     window.addEventListener(
 
-      "scroll",
+      "system:section-change",
 
-      updateProgress,
-
-      {
-
-        passive: true,
-
-      }
+      handleSectionChange
 
     );
 
@@ -516,9 +574,9 @@ export default function Navbar() {
 
     window.addEventListener(
 
-      "resize",
+      "system:progress",
 
-      updateProgress
+      handleProgress
 
     );
 
@@ -528,9 +586,9 @@ export default function Navbar() {
 
       window.removeEventListener(
 
-        "scroll",
+        "system:section-change",
 
-        updateProgress
+        handleSectionChange
 
       );
 
@@ -538,185 +596,11 @@ export default function Navbar() {
 
       window.removeEventListener(
 
-        "resize",
+        "system:progress",
 
-        updateProgress
+        handleProgress
 
       );
-
-    };
-
-  }, []);
-
-
-
-  useEffect(() => {
-
-    const elements =
-
-      sections
-
-        .map(
-
-          (
-
-            section
-
-          ) =>
-
-            document.getElementById(
-
-              section.id
-
-            )
-
-        )
-
-        .filter(
-
-          (
-
-            element
-
-          ): element is HTMLElement =>
-
-            element !==
-
-            null
-
-        );
-
-
-
-    if (
-
-      elements.length ===
-
-      0
-
-    ) {
-
-      return;
-
-    }
-
-
-
-    const observer =
-
-      new IntersectionObserver(
-
-        (
-
-          entries
-
-        ) => {
-
-          const visible =
-
-            entries
-
-              .filter(
-
-                (
-
-                  entry
-
-                ) =>
-
-                  entry.isIntersecting
-
-              )
-
-              .sort(
-
-                (
-
-                  first,
-
-                  second
-
-                ) =>
-
-                  second.intersectionRatio -
-
-                  first.intersectionRatio
-
-              );
-
-
-
-          if (
-
-            visible.length >
-
-            0
-
-          ) {
-
-            setActiveSection(
-
-              visible[0]
-
-                .target.id
-
-            );
-
-          }
-
-        },
-
-        {
-
-          root: null,
-
-          rootMargin:
-
-            "-28% 0px -52% 0px",
-
-          threshold: [
-
-            0,
-
-            0.1,
-
-            0.25,
-
-            0.5,
-
-            0.75,
-
-          ],
-
-        }
-
-      );
-
-
-
-    elements.forEach(
-
-      (
-
-        element
-
-      ) => {
-
-        observer.observe(
-
-          element
-
-        );
-
-      }
-
-    );
-
-
-
-    return () => {
-
-      observer.disconnect();
 
     };
 
@@ -2628,6 +2512,16 @@ export default function Navbar() {
 
                       }
 
+                      aria-current={
+
+                        active
+
+                          ? "location"
+
+                          : undefined
+
+                      }
+
                       className={`
 
                         group
@@ -2853,6 +2747,8 @@ export default function Navbar() {
 
 
                       <span
+
+                        aria-hidden="true"
 
                         className="
 

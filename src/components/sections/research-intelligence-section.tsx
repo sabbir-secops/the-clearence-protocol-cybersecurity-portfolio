@@ -42,18 +42,18 @@ const researchNodes: ResearchNode[] = [
     shortName: "Security",
     status: "Investigating",
     description:
-      "Security research connects vulnerabilities, attack surfaces, tools and technical evidence into a clearer understanding of system behavior.",
+      "Security research connects vulnerabilities, attack surfaces, OSINT, cyber threat intelligence and technical evidence into a clearer understanding of system behavior.",
     purpose:
-      "Explore how security weaknesses appear, how they can be validated and how technical evidence can support stronger defensive decisions.",
+      "Explore how security weaknesses appear, how they can be validated and how vulnerability and threat intelligence can support stronger defensive decisions.",
     signals: [
       "Vulnerability Research",
-      "OWASP",
-      "CWE",
+      "OSINT",
+      "Cyber Threat Intelligence",
       "CVE",
-      "Attack Surface",
-      "Security Tooling",
-      "Technical Evidence",
-      "Security Findings",
+      "CWE",
+      "KEV",
+      "EPSS",
+      "MITRE ATT&CK",
     ],
   },
   {
@@ -593,6 +593,11 @@ export default function ResearchIntelligenceSection() {
                       text-left
                       transition
                       duration-300
+                      focus-visible:outline-none
+                      focus-visible:ring-2
+                      focus-visible:ring-violet-300/70
+                      focus-visible:ring-offset-2
+                      focus-visible:ring-offset-[#090e13]
 
                       ${
                         active
@@ -715,6 +720,7 @@ export default function ResearchIntelligenceSection() {
                         </span>
 
                         <span
+                          aria-hidden="true"
                           className="
                             text-cyan-200
                             transition

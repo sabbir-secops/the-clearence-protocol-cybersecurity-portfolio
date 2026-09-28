@@ -59,7 +59,7 @@ const securityLayers: SecurityLayer[] = [
     name: "Vulnerability Analysis",
     shortName: "Vulnerability",
     description:
-      "Identification, validation and documentation of weaknesses, attack paths and risky system behavior.",
+      "Vulnerability assessment and penetration testing focused on identifying, validating and documenting weaknesses, attack paths and risky system behavior.",
     signals: [
       "VAPT",
       "Vulnerability Assessment",
@@ -307,6 +307,14 @@ export default function SecurityDomainSection() {
             duration: 34,
             repeat: -1,
             ease: "none",
+            scrollTrigger: {
+              trigger:
+                ".security-layer-area",
+              start: "top 90%",
+              end: "bottom 10%",
+              toggleActions:
+                "play pause resume pause",
+            },
           }
         );
 
@@ -317,6 +325,14 @@ export default function SecurityDomainSection() {
             duration: 27,
             repeat: -1,
             ease: "none",
+            scrollTrigger: {
+              trigger:
+                ".security-layer-area",
+              start: "top 90%",
+              end: "bottom 10%",
+              toggleActions:
+                "play pause resume pause",
+            },
           }
         );
       }, section);
@@ -419,14 +435,15 @@ export default function SecurityDomainSection() {
               "
             >
               Security decisions begin
-              before deployment. I
-              explore application
-              behavior, access control,
-              network surfaces and
-              infrastructure to
-              understand where systems
-              can fail and how they can
-              be designed more
+              before deployment. I use
+              offensive security and
+              penetration testing
+              workflows to explore
+              application behavior,
+              access control, network
+              surfaces and infrastructure,
+              understand failure paths
+              and design systems more
               defensively.
             </p>
           </div>
@@ -575,6 +592,11 @@ export default function SecurityDomainSection() {
                       text-left
                       transition
                       duration-300
+                      focus-visible:outline-none
+                      focus-visible:ring-2
+                      focus-visible:ring-cyan-300/70
+                      focus-visible:ring-offset-2
+                      focus-visible:ring-offset-[#090e13]
 
                       ${
                         active
@@ -701,6 +723,7 @@ export default function SecurityDomainSection() {
                         </span>
 
                         <span
+                          aria-hidden="true"
                           className="
                             text-cyan-200
                             transition
@@ -990,6 +1013,11 @@ export default function SecurityDomainSection() {
                       transition-[transform,border-color,background-color,box-shadow,opacity]
                       duration-500
                       ease-out
+                      focus-visible:outline-none
+                      focus-visible:ring-2
+                      focus-visible:ring-cyan-300/70
+                      focus-visible:ring-offset-2
+                      focus-visible:ring-offset-[#090e13]
 
                       ${
                         active
