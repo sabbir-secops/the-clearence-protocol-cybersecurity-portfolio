@@ -43,12 +43,6 @@ export default function sitemap():
     {
       url:
         siteOrigin,
-      lastModified:
-        new Date(),
-      changeFrequency:
-        "monthly",
-      priority:
-        1,
     },
   ];
 }

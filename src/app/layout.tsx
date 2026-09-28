@@ -14,10 +14,10 @@ const PERSON_NAME =
   "Md. Sabbir Hossain";
 
 const SITE_TITLE =
-  "Md. Sabbir Hossain | Cybersecurity Product Engineer";
+  "Md. Sabbir Hossain | Cybersecurity Product Engineer & Penetration Tester";
 
 const SITE_DESCRIPTION =
-  "The Clearance Protocol is the cybersecurity portfolio of Md. Sabbir Hossain, focused on secure product engineering, application security, infrastructure, web and app engineering, technical SEO and security research.";
+  "Md. Sabbir Hossain is a Bangladesh-based Cybersecurity Product Engineer, ethical hacker and penetration tester focused on AppSec, API security, VAPT and secure systems.";
 
 const KEYWORDS = [
   "Md. Sabbir",
@@ -58,6 +58,40 @@ const KEYWORDS = [
   "Cybersecurity and Product Engineering",
   "Infrastructure Security Engineer",
   "Technical SEO and Performance Engineer",
+  "Cybersecurity Professional",
+  "Cybersecurity Professional Bangladesh",
+  "Cyber Security Expert Bangladesh",
+  "Ethical Hacker",
+  "Ethical Hacker Bangladesh",
+  "White Hat Hacker",
+  "White Hat Hacker Bangladesh",
+  "Penetration Tester",
+  "Penetration Tester Bangladesh",
+  "Penetration Testing",
+  "Web Application Penetration Testing",
+  "API Penetration Testing",
+  "Network Penetration Testing",
+  "Vulnerability Assessment",
+  "Vulnerability Assessment and Penetration Testing",
+  "VAPT",
+  "VAPT Bangladesh",
+  "Offensive Security",
+  "Offensive Security Engineer",
+  "Offensive Security Bangladesh",
+  "Red Team",
+  "Red Teaming",
+  "Red Team Operator",
+  "Blue Team",
+  "Defensive Security",
+  "OSINT",
+  "OSINT Expert Bangladesh",
+  "Open Source Intelligence",
+  "Cyber Threat Intelligence",
+  "Threat Intelligence",
+  "Security Researcher",
+  "Security Researcher Bangladesh",
+  "Cybersecurity Consultant Bangladesh",
+  "Bangladesh Cybersecurity",
 ];
 
 function getMetadataBase() {
@@ -134,6 +168,10 @@ export const metadata: Metadata = {
       SITE_NAME,
     locale:
       "en_US",
+    url:
+      metadataBase
+        ? "/"
+        : undefined,
   },
   twitter: {
     card:
