@@ -213,6 +213,79 @@ function hasDirectTextContent(
   );
 }
 
+function clipsHorizontalOverflow(
+  element: Element
+) {
+  const style =
+    window.getComputedStyle(
+      element
+    );
+
+  return (
+    style.overflowX ===
+      "hidden" ||
+    style.overflowX ===
+      "clip" ||
+    style.overflowX ===
+      "auto" ||
+    style.overflowX ===
+      "scroll"
+  );
+}
+
+function getVisibleHorizontalBounds(
+  element: Element
+) {
+  const rect =
+    element.getBoundingClientRect();
+
+  let left =
+    rect.left;
+
+  let right =
+    rect.right;
+
+  let ancestor =
+    element.parentElement;
+
+  while (
+    ancestor &&
+    ancestor !==
+      document.body &&
+    ancestor !==
+      document.documentElement
+  ) {
+    if (
+      clipsHorizontalOverflow(
+        ancestor
+      )
+    ) {
+      const ancestorRect =
+        ancestor.getBoundingClientRect();
+
+      left =
+        Math.max(
+          left,
+          ancestorRect.left
+        );
+
+      right =
+        Math.min(
+          right,
+          ancestorRect.right
+        );
+    }
+
+    ancestor =
+      ancestor.parentElement;
+  }
+
+  return {
+    left,
+    right,
+  };
+}
+
 function uniqueIssues(
   issues: QaIssue[]
 ) {
@@ -331,11 +404,16 @@ function auditPage() {
         style.position ===
           "sticky";
 
+      const visibleBounds =
+        getVisibleHorizontalBounds(
+          element
+        );
+
       const horizontalOverflow =
-        rect.right >
+        visibleBounds.right >
           viewportWidth +
             2 ||
-        rect.left <
+        visibleBounds.left <
           -2;
 
       if (
@@ -612,9 +690,11 @@ export default function ResponsiveQa() {
           KeyboardEvent
       ) => {
         if (
-          enabled &&
           event.key ===
-            "Escape"
+            "Escape" &&
+          document.querySelector(
+            "[data-responsive-qa-root]"
+          )
         ) {
           event.preventDefault();
 
@@ -657,9 +737,7 @@ export default function ResponsiveQa() {
         handleShortcut
       );
     };
-  }, [
-    enabled,
-  ]);
+  }, []);
 
   useEffect(() => {
     if (

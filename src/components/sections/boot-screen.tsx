@@ -12,6 +12,11 @@ type BootScreenProps = {
   onUnlock: () => void;
 };
 
+const firefoxButtonAttributes:
+  Record<string, string> = {
+    autoComplete: "off",
+  };
+
 export default function BootScreen({
   onUnlock,
 }: BootScreenProps) {
@@ -540,6 +545,7 @@ export default function BootScreen({
               </div>
 
               <button
+                {...firefoxButtonAttributes}
                 type="button"
                 disabled={
                   !ready ||
