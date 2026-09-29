@@ -346,7 +346,59 @@ export default function SystemEnvironment({
     const root =
       document.documentElement;
 
+    const sectionElements =
+      sections
+        .map(
+          (
+            definition,
+            index
+          ) => {
+            const element =
+              document.getElementById(
+                definition.id
+              );
+
+            if (!element) {
+              return null;
+            }
+
+            return {
+              definition,
+              element,
+              index,
+            };
+          }
+        )
+        .filter(
+          (
+            item
+          ): item is NonNullable<
+            typeof item
+          > =>
+            item !== null
+        );
+
+    if (
+      sectionElements.length ===
+      0
+    ) {
+      return;
+    }
+
+    type MeasuredSection = {
+      definition: SectionDefinition;
+      index: number;
+      top: number;
+      bottom: number;
+      height: number;
+      center: number;
+    };
+
     let frame = 0;
+    let measureFrame = 0;
+    let measuredSections:
+      MeasuredSection[] = [];
+    let pageScrollable = 1;
     let previousScroll =
       window.scrollY;
 
@@ -362,126 +414,112 @@ export default function SystemEnvironment({
       () => {
         frame = 0;
 
-        const viewportHeight =
-          window.innerHeight;
-
-        const viewportCenter =
-          viewportHeight *
-          0.5;
-
-        const availableSections =
-          sections
-            .map(
-              (
-                definition
-              ) => {
-                const element =
-                  document.getElementById(
-                    definition.id
-                  );
-
-                if (!element) {
-                  return null;
-                }
-
-                const rect =
-                  element.getBoundingClientRect();
-
-                const center =
-                  rect.top +
-                  rect.height /
-                    2;
-
-                const distance =
-                  Math.abs(
-                    center -
-                      viewportCenter
-                  );
-
-                return {
-                  definition,
-                  element,
-                  rect,
-                  distance,
-                };
-              }
-            )
-            .filter(
-              (
-                item
-              ): item is NonNullable<
-                typeof item
-              > =>
-                item !== null
-            );
-
         if (
-          availableSections.length ===
+          measuredSections.length ===
           0
         ) {
           return;
         }
 
+        const viewportHeight =
+          window.innerHeight;
+
+        const scrollY =
+          window.scrollY;
+
+        const viewportCenter =
+          scrollY +
+          viewportHeight *
+            0.5;
+
         const centered =
-          availableSections.find(
+          measuredSections.find(
             (item) =>
-              item.rect.top <=
+              item.top <=
                 viewportCenter &&
-              item.rect.bottom >=
+              item.bottom >=
                 viewportCenter
           );
 
-        const nearest =
+        let nearest =
           centered ??
-          [...availableSections].sort(
-            (
-              first,
-              second
-            ) =>
-              first.distance -
-              second.distance
-          )[0];
+          measuredSections[0];
+
+        if (!centered) {
+          let nearestDistance =
+            Math.abs(
+              nearest.center -
+                viewportCenter
+            );
+
+          for (
+            let index = 1;
+            index <
+            measuredSections.length;
+            index += 1
+          ) {
+            const candidate =
+              measuredSections[
+                index
+              ];
+
+            const distance =
+              Math.abs(
+                candidate.center -
+                  viewportCenter
+              );
+
+            if (
+              distance <
+              nearestDistance
+            ) {
+              nearest =
+                candidate;
+
+              nearestDistance =
+                distance;
+            }
+          }
+        }
 
         const {
           definition,
-          rect,
+          height,
+          index,
+          top,
         } = nearest;
 
-        const pageScrollable =
-          Math.max(
-            document.documentElement
-              .scrollHeight -
-              viewportHeight,
-            1
-          );
+        const rectTop =
+          top -
+          scrollY;
 
         const pageProgress =
           clamp(
-            window.scrollY /
+            scrollY /
               pageScrollable
           );
 
         const sectionTravel =
-          rect.height +
+          height +
           viewportHeight;
 
         const sectionProgress =
           clamp(
             (
               viewportHeight -
-              rect.top
+              rectTop
             ) /
               sectionTravel
           );
 
         const direction =
-          window.scrollY >=
+          scrollY >=
           previousScroll
             ? "down"
             : "up";
 
         previousScroll =
-          window.scrollY;
+          scrollY;
 
         root.style.setProperty(
           "--system-page-progress",
@@ -555,12 +593,7 @@ export default function SystemEnvironment({
                     definition.rgb,
                   energy:
                     definition.energy,
-                  index:
-                    sections.findIndex(
-                      (section) =>
-                        section.id ===
-                        definition.id
-                    ),
+                  index,
                 },
               }
             )
@@ -595,6 +628,88 @@ export default function SystemEnvironment({
           );
       };
 
+    const measure =
+      () => {
+        measureFrame = 0;
+
+        const scrollY =
+          window.scrollY;
+
+        measuredSections =
+          sectionElements.map(
+            (
+              {
+                definition,
+                element,
+                index,
+              }
+            ) => {
+              const rect =
+                element.getBoundingClientRect();
+
+              const top =
+                rect.top +
+                scrollY;
+
+              const height =
+                rect.height;
+
+              return {
+                definition,
+                index,
+                top,
+                bottom:
+                  top +
+                  height,
+                height,
+                center:
+                  top +
+                  height /
+                    2,
+              };
+            }
+          );
+
+        pageScrollable =
+          Math.max(
+            root.scrollHeight -
+              window.innerHeight,
+            1
+          );
+
+        requestUpdate();
+      };
+
+    const requestMeasure =
+      () => {
+        if (
+          measureFrame !==
+          0
+        ) {
+          return;
+        }
+
+        measureFrame =
+          window.requestAnimationFrame(
+            measure
+          );
+      };
+
+    const resizeObserver =
+      new ResizeObserver(
+        requestMeasure
+      );
+
+    for (
+      const {
+        element,
+      } of sectionElements
+    ) {
+      resizeObserver.observe(
+        element
+      );
+    }
+
     const initialDefinition =
       sections.find(
         (
@@ -621,7 +736,7 @@ export default function SystemEnvironment({
       initialDefinition.rgb
     );
 
-    requestUpdate();
+    requestMeasure();
 
     window.addEventListener(
       "scroll",
@@ -633,13 +748,24 @@ export default function SystemEnvironment({
 
     window.addEventListener(
       "resize",
-      requestUpdate
+      requestMeasure
     );
 
     return () => {
+      resizeObserver.disconnect();
+
       if (frame !== 0) {
         window.cancelAnimationFrame(
           frame
+        );
+      }
+
+      if (
+        measureFrame !==
+        0
+      ) {
+        window.cancelAnimationFrame(
+          measureFrame
         );
       }
 
@@ -650,7 +776,7 @@ export default function SystemEnvironment({
 
       window.removeEventListener(
         "resize",
-        requestUpdate
+        requestMeasure
       );
     };
   }, [

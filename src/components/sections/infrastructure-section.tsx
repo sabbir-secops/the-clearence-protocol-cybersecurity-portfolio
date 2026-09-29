@@ -80,7 +80,7 @@ const infrastructureLayers: InfrastructureLayer[] = [
     shortName: "Edge",
     status: "Routing",
     description:
-      "The edge layer handles traffic close to the public internet and supports delivery, encryption and infrastructure protection.",
+      "The edge layer handles public traffic through Cloudflare, CDN delivery, HTTPS and SSL or TLS transport protection before requests reach origin systems.",
     signals: [
       "Cloudflare",
       "CDN",
@@ -99,7 +99,7 @@ const infrastructureLayers: InfrastructureLayer[] = [
     shortName: "Defense",
     status: "Filtering",
     description:
-      "Protective controls inspect and restrict unwanted traffic before it reaches sensitive server and application resources.",
+      "WAF, firewall, Fail2Ban and access rules help inspect, filter and restrict unwanted traffic before it reaches sensitive server and application resources.",
     signals: [
       "WAF",
       "Firewall",
@@ -118,7 +118,7 @@ const infrastructureLayers: InfrastructureLayer[] = [
     shortName: "Server",
     status: "Hardened",
     description:
-      "The operating environment where hosting, web services, administrative access and system resources are managed.",
+      "The Linux server environment where hosting, web services, SSH access, server hardening and production resources are managed.",
     signals: [
       "Linux",
       "VPS",
@@ -130,7 +130,7 @@ const infrastructureLayers: InfrastructureLayer[] = [
       "Hosting",
     ],
     role:
-      "Operate and harden the environment responsible for supporting production workloads and exposed services.",
+      "Operate and harden Linux hosting environments that support production workloads, web servers and exposed services.",
   },
   {
     id: "container",
@@ -345,6 +345,7 @@ export default function InfrastructureSection() {
     <section
       ref={sectionRef}
       id="infrastructure"
+      aria-labelledby="infrastructure-title"
       className="
         relative
         overflow-hidden
@@ -418,6 +419,7 @@ export default function InfrastructureSection() {
             </p>
 
             <h2
+              id="infrastructure-title"
               className="
                 section-title
                 max-w-[900px]
@@ -447,10 +449,10 @@ export default function InfrastructureSection() {
             >
               Applications depend on
               multiple connected layers.
-              I work across hosting,
-              Linux environments, DNS,
-              Cloudflare, transport
-              security, containers,
+              I work across Linux server
+              hardening, hosting, DNS,
+              Cloudflare, SSL and TLS,
+              WAF controls, containers,
               deployment and application
               architecture.
             </p>
@@ -483,7 +485,10 @@ export default function InfrastructureSection() {
               gap-3
             "
           >
-            <span className="status-dot" />
+            <span
+              aria-hidden="true"
+              className="status-dot"
+            />
 
             <span className="tiny-mono">
               Infrastructure Route | Active
@@ -578,6 +583,7 @@ export default function InfrastructureSection() {
                     key={layer.id}
                     type="button"
                     aria-pressed={active}
+                    aria-controls="infrastructure-detail"
                     onClick={() =>
                       setActiveLayer(
                         layer.id
@@ -593,8 +599,14 @@ export default function InfrastructureSection() {
                       border
                       p-5
                       text-left
+                      outline-none
                       transition
                       duration-300
+                      focus-visible:ring-2
+                      focus-visible:ring-cyan-300/70
+                      focus-visible:ring-offset-2
+                      focus-visible:ring-offset-[#090e13]
+                      motion-reduce:transition-none
 
                       ${
                         active
@@ -710,6 +722,7 @@ export default function InfrastructureSection() {
                         </span>
 
                         <span
+                          aria-hidden="true"
                           className="
                             text-cyan-200
                             transition
@@ -765,6 +778,7 @@ export default function InfrastructureSection() {
                 transition-[width,opacity]
                 duration-500
                 ease-out
+                motion-reduce:transition-none
               "
               style={{
                 width: `${
@@ -806,6 +820,7 @@ export default function InfrastructureSection() {
                       key={layer.id}
                       type="button"
                       aria-pressed={active}
+                      aria-controls="infrastructure-detail"
                       onFocus={() =>
                         setActiveLayer(
                           layer.id
@@ -825,9 +840,15 @@ export default function InfrastructureSection() {
                         flex-col
                         items-center
                         text-center
+                        outline-none
                         transition-[transform,opacity]
                         duration-500
                         ease-out
+                        focus-visible:ring-2
+                        focus-visible:ring-cyan-300/70
+                        focus-visible:ring-offset-4
+                        focus-visible:ring-offset-[#090e13]
+                        motion-reduce:transition-none
 
                         ${
                           active
@@ -1000,6 +1021,7 @@ export default function InfrastructureSection() {
         </div>
 
         <div
+          id="infrastructure-detail"
           className="
             infrastructure-detail
             mt-5
@@ -1112,7 +1134,10 @@ export default function InfrastructureSection() {
                   pt-5
                 "
               >
-                <span className="status-dot" />
+                <span
+                  aria-hidden="true"
+                  className="status-dot"
+                />
 
                 <div>
                   <p className="tiny-mono">
@@ -1220,6 +1245,7 @@ export default function InfrastructureSection() {
                         </span>
 
                         <span
+                          aria-hidden="true"
                           className="
                             h-1.5
                             w-1.5
@@ -1276,9 +1302,12 @@ export default function InfrastructureSection() {
               sm:text-right
             "
           >
-            Reliable products depend
-            on the systems operating
-            beneath the interface.
+            Reliable products depend on
+            connected DNS, edge security,
+            server hardening, deployment,
+            application and data layers
+            operating beneath the
+            interface.
           </p>
         </div>
       </div>

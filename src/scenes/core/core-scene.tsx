@@ -361,7 +361,7 @@ function AdaptiveRenderer() {
                 maxDpr,
                 1
               ),
-              1.5
+              1.35
             )
           );
 
@@ -394,7 +394,7 @@ function AdaptiveRenderer() {
       };
 
     applyMaxDpr(
-      1.5
+      1.35
     );
 
     window.addEventListener(
@@ -421,6 +421,78 @@ function AdaptiveRenderer() {
   return null;
 }
 
+function RenderLoopController({
+  active,
+}: {
+  active: boolean;
+}) {
+  const {
+    invalidate,
+    setFrameloop,
+  } = useThree();
+
+  useEffect(() => {
+    const applyLoopState =
+      (
+        hidden: boolean
+      ) => {
+        if (
+          !active ||
+          hidden
+        ) {
+          setFrameloop(
+            "never"
+          );
+
+          return;
+        }
+
+        setFrameloop(
+          "always"
+        );
+
+        invalidate();
+      };
+
+    const handleVisibilityChange =
+      (
+        event: Event
+      ) => {
+        const customEvent =
+          event as CustomEvent<VisibilityDetail>;
+
+        applyLoopState(
+          Boolean(
+            customEvent.detail
+              ?.hidden
+          )
+        );
+      };
+
+    applyLoopState(
+      document.hidden
+    );
+
+    window.addEventListener(
+      "system:visibility-change",
+      handleVisibilityChange
+    );
+
+    return () => {
+      window.removeEventListener(
+        "system:visibility-change",
+        handleVisibilityChange
+      );
+    };
+  }, [
+    active,
+    invalidate,
+    setFrameloop,
+  ]);
+
+  return null;
+}
+
 function AmbientSignals() {
   const {
     size,
@@ -442,10 +514,10 @@ function AmbientSignals() {
 
   const signalCount =
     size.width < 640
-      ? 24
+      ? 20
       : size.width < 1024
-        ? 32
-        : 48;
+        ? 28
+        : 42;
 
   const geometry =
     useMemo(() => {
@@ -5127,10 +5199,12 @@ function CoreSystem() {
 
 type CoreSceneProps = {
   fill?: boolean;
+  active?: boolean;
 };
 
 export default function CoreScene({
   fill = false,
+  active = true,
 }: CoreSceneProps) {
   return (
     <div
@@ -5187,7 +5261,7 @@ export default function CoreScene({
         <Canvas
           dpr={[
             1,
-            1.5,
+            1.35,
           ]}
           gl={{
             antialias: true,
@@ -5213,6 +5287,10 @@ export default function CoreScene({
           <AdaptiveCamera />
 
           <AdaptiveRenderer />
+
+          <RenderLoopController
+            active={active}
+          />
 
           <fog
             attach="fog"

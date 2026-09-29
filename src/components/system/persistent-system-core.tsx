@@ -359,7 +359,10 @@ export default function PersistentSystemCore({
   }, []);
 
   useEffect(() => {
-    if (!enabled) {
+    if (
+      !enabled ||
+      activeId !== "hero"
+    ) {
       return;
     }
 
@@ -450,6 +453,7 @@ export default function PersistentSystemCore({
       }
     };
   }, [
+    activeId,
     enabled,
   ]);
 
@@ -608,7 +612,10 @@ export default function PersistentSystemCore({
               }
         }
       >
-        <CoreScene fill />
+        <CoreScene
+          fill
+          active={enabled}
+        />
       </div>
     </div>
   );

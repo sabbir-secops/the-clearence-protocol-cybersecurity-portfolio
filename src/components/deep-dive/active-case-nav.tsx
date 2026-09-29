@@ -23,7 +23,9 @@ type ActiveCaseNavProps = {
 const accentClasses = {
   cyan: {
     active:
-      "border-cyan-300/35 bg-cyan-300/[0.07] text-cyan-100",
+      "border-cyan-300/35 bg-cyan-300/[0.07] text-cyan-100 shadow-[0_0_18px_rgba(85,221,255,0.08)]",
+    inactive:
+      "border-transparent text-[#8f9ca5] hover:border-cyan-300/20 hover:bg-cyan-300/[0.025] hover:text-cyan-100",
     ring:
       "focus-visible:ring-cyan-300/70",
     line:
@@ -33,7 +35,9 @@ const accentClasses = {
   },
   blue: {
     active:
-      "border-sky-300/35 bg-sky-300/[0.07] text-sky-100",
+      "border-sky-300/35 bg-sky-300/[0.07] text-sky-100 shadow-[0_0_18px_rgba(31,113,148,0.10)]",
+    inactive:
+      "border-transparent text-[#8f9ca5] hover:border-sky-300/20 hover:bg-sky-300/[0.025] hover:text-sky-100",
     ring:
       "focus-visible:ring-sky-300/70",
     line:
@@ -43,7 +47,9 @@ const accentClasses = {
   },
   violet: {
     active:
-      "border-violet-300/35 bg-violet-300/[0.07] text-violet-100",
+      "border-violet-300/35 bg-violet-300/[0.07] text-violet-100 shadow-[0_0_18px_rgba(120,109,255,0.10)]",
+    inactive:
+      "border-transparent text-[#8f9ca5] hover:border-violet-300/20 hover:bg-violet-300/[0.025] hover:text-violet-100",
     ring:
       "focus-visible:ring-violet-300/70",
     line:
@@ -53,7 +59,9 @@ const accentClasses = {
   },
   white: {
     active:
-      "border-white/25 bg-white/[0.06] text-white",
+      "border-white/25 bg-white/[0.06] text-white shadow-[0_0_18px_rgba(223,248,255,0.06)]",
+    inactive:
+      "border-transparent text-[#8f9ca5] hover:border-white/15 hover:bg-white/[0.025] hover:text-white",
     ring:
       "focus-visible:ring-white/60",
     line:
@@ -333,6 +341,7 @@ export default function ActiveCaseNav({
             left-0
             h-px
             w-0
+            opacity-90
             ${styles.line}
           `}
         />
@@ -424,14 +433,17 @@ export default function ActiveCaseNav({
                     tracking-[0.10em]
                     uppercase
                     outline-none
-                    transition
+                    transition-[transform,border-color,background-color,color,box-shadow]
+                    duration-300
+                    motion-safe:hover:-translate-y-px
+                    motion-reduce:transition-none
                     focus-visible:ring-2
                     ${styles.ring}
 
                     ${
                       isActive
                         ? styles.active
-                        : "border-transparent text-[#8f9ca5] hover:border-white/[0.09] hover:text-[#eef5f8]"
+                        : styles.inactive
                     }
                   `}
                 >
@@ -445,4 +457,3 @@ export default function ActiveCaseNav({
     </nav>
   );
 }
-

@@ -60,6 +60,12 @@ function createProfile(): PerformanceProfileDetail {
       1
     );
 
+  const height =
+    Math.max(
+      window.innerHeight,
+      1
+    );
+
   const dpr =
     Math.max(
       window.devicePixelRatio ||
@@ -101,11 +107,16 @@ function createProfile(): PerformanceProfileDetail {
       memory <= 4
     );
 
+  const compactLandscape =
+    width <= 900 &&
+    height <= 430;
+
   const veryCompact =
-    width < 430;
+    width < 430 ||
+    compactLandscape;
 
   const compact =
-    width < 768;
+    width < 1280;
 
   let tier:
     PerformanceTier =
@@ -157,9 +168,9 @@ function createProfile(): PerformanceProfileDetail {
   ) {
     return {
       tier,
-      maxDpr: 1.25,
-      motionScale: 0.72,
-      ambientDensity: 0.72,
+      maxDpr: 1.2,
+      motionScale: 0.7,
+      ambientDensity: 0.66,
       cinematicFrames: !saveData,
       glowScale: 0.8,
       viewportWidth: width,
@@ -168,9 +179,9 @@ function createProfile(): PerformanceProfileDetail {
 
   return {
     tier,
-    maxDpr: 1.5,
+    maxDpr: 1.35,
     motionScale: 1,
-    ambientDensity: 1,
+    ambientDensity: 0.92,
     cinematicFrames: true,
     glowScale: 1,
     viewportWidth: width,

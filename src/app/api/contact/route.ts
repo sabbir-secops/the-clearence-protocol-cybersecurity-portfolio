@@ -1,5 +1,6 @@
 import {
   createHash,
+  timingSafeEqual,
 } from "node:crypto";
 import {
   isIP,
@@ -7,6 +8,9 @@ import {
 import {
   NextResponse,
 } from "next/server";
+
+export const runtime =
+  "nodejs";
 
 type ContactPayload = {
   identity?: unknown;
@@ -85,6 +89,23 @@ const MAX_BODY_BYTES =
 const RATE_STORE_CLEANUP_THRESHOLD =
   512;
 
+const isProduction =
+  process.env.NODE_ENV ===
+  "production";
+
+const REQUIRE_CLOUDFLARE_PROXY =
+  process.env.CLOUDFLARE_PROXY_REQUIRED ===
+  "true";
+
+const CLOUDFLARE_ORIGIN_TOKEN =
+  (
+    process.env.CLOUDFLARE_ORIGIN_TOKEN ??
+    ""
+  ).trim();
+
+const CLOUDFLARE_ORIGIN_HEADER =
+  "x-tcp-origin-auth";
+
 const globalRateStore =
   globalThis as
     RateStoreGlobal;
@@ -136,9 +157,32 @@ function normalizeIp(
     : "";
 }
 
+function getCloudflareClientAddress(
+  request: Request
+) {
+  return normalizeIp(
+    request.headers.get(
+      "cf-connecting-ip"
+    )
+  );
+}
+
 function getClientAddress(
   request: Request
 ) {
+  const cloudflareIp =
+    getCloudflareClientAddress(
+      request
+    );
+
+  if (cloudflareIp) {
+    return cloudflareIp;
+  }
+
+  if (isProduction) {
+    return "unknown";
+  }
+
   const realIp =
     normalizeIp(
       request.headers.get(
@@ -176,6 +220,47 @@ function getClientAddress(
   }
 
   return "unknown";
+}
+
+function hasValidOriginToken(
+  request: Request
+) {
+  if (
+    !isProduction ||
+    !CLOUDFLARE_ORIGIN_TOKEN
+  ) {
+    return true;
+  }
+
+  const supplied =
+    request.headers.get(
+      CLOUDFLARE_ORIGIN_HEADER
+    ) ??
+    "";
+
+  const expectedBytes =
+    Buffer.from(
+      CLOUDFLARE_ORIGIN_TOKEN,
+      "utf8"
+    );
+
+  const suppliedBytes =
+    Buffer.from(
+      supplied,
+      "utf8"
+    );
+
+  if (
+    expectedBytes.length !==
+    suppliedBytes.length
+  ) {
+    return false;
+  }
+
+  return timingSafeEqual(
+    expectedBytes,
+    suppliedBytes
+  );
 }
 
 function makeRateKey(
@@ -341,29 +426,36 @@ function isSameOrigin(
     );
   }
 
-  const forwardedHost =
-    request.headers.get(
-      "x-forwarded-host"
-    );
-
-  const host =
-    forwardedHost
-      ?.split(",")[0]
-      ?.trim() ||
-    request.headers.get(
-      "host"
-    )?.trim();
-
-  if (!host) {
-    return false;
-  }
-
   try {
-    return (
+    const parsedOrigin =
       new URL(
         origin
-      ).host ===
-      host
+      );
+
+    if (isProduction) {
+      return (
+        parsedOrigin.origin ===
+        SITE_ORIGIN
+      );
+    }
+
+    const forwardedHost =
+      request.headers.get(
+        "x-forwarded-host"
+      );
+
+    const host =
+      forwardedHost
+        ?.split(",")[0]
+        ?.trim() ||
+      request.headers.get(
+        "host"
+      )?.trim();
+
+    return (
+      Boolean(host) &&
+      parsedOrigin.host ===
+        host
     );
   } catch {
     return false;
@@ -405,6 +497,43 @@ function isValidEmail(
 export async function POST(
   request: Request
 ) {
+  if (
+    !hasValidOriginToken(
+      request
+    )
+  ) {
+    return json(
+      {
+        success:
+          false,
+        message:
+          "Request source rejected.",
+      },
+      403
+    );
+  }
+
+  const cloudflareClientAddress =
+    getCloudflareClientAddress(
+      request
+    );
+
+  if (
+    isProduction &&
+    REQUIRE_CLOUDFLARE_PROXY &&
+    !cloudflareClientAddress
+  ) {
+    return json(
+      {
+        success:
+          false,
+        message:
+          "Trusted proxy required.",
+      },
+      403
+    );
+  }
+
   if (
     !isSameOrigin(
       request

@@ -42,7 +42,7 @@ const capabilityClusters: CapabilityCluster[] = [
     title: "Cybersecurity",
     shortTitle: "Security",
     description:
-      "Application security, vulnerability analysis, access control and security focused system thinking.",
+      "Application security, API security, web penetration testing, vulnerability analysis and access control across connected digital systems.",
     skills: [
       "Application Security",
       "Web Security",
@@ -74,7 +74,7 @@ const capabilityClusters: CapabilityCluster[] = [
     title: "Secure Infrastructure",
     shortTitle: "Infrastructure",
     description:
-      "The server, network, hosting and protection layers underneath digital products.",
+      "Linux, server hardening, hosting, DNS, Cloudflare and network protection layers underneath digital products.",
     skills: [
       "Linux",
       "Server Security",
@@ -107,7 +107,7 @@ const capabilityClusters: CapabilityCluster[] = [
     title: "Product Engineering",
     shortTitle: "Product",
     description:
-      "Architecture and product thinking for scalable, role aware and connected digital systems.",
+      "Product architecture and system design for scalable, role aware, multi tenant and API driven digital systems.",
     skills: [
       "Product Architecture",
       "SaaS Architecture",
@@ -136,7 +136,7 @@ const capabilityClusters: CapabilityCluster[] = [
     title: "Web and App Engineering",
     shortTitle: "Engineering",
     description:
-      "Frontend, backend and cross platform application technologies used to turn architecture into working systems.",
+      "Frontend, backend and cross platform web and app engineering used to turn architecture into working systems.",
     skills: [
       "JavaScript",
       "TypeScript",
@@ -168,7 +168,7 @@ const capabilityClusters: CapabilityCluster[] = [
     title: "Search and Performance",
     shortTitle: "Optimization",
     description:
-      "Technical performance, search architecture and modern discoverability across search and AI surfaces.",
+      "Technical SEO, Core Web Vitals, structured data, search architecture and modern discoverability across search and AI surfaces.",
     skills: [
       "Technical SEO",
       "Core Web Vitals",
@@ -197,7 +197,7 @@ const capabilityClusters: CapabilityCluster[] = [
     title: "AI and Research",
     shortTitle: "Research",
     description:
-      "Technical investigation, AI assisted engineering and experimentation across emerging systems.",
+      "Security research, technical investigation, AI assisted engineering and experimentation across emerging systems.",
     skills: [
       "Security Research",
       "Technical Research",
@@ -401,6 +401,7 @@ export default function CapabilityNetworkSection() {
     <section
       ref={sectionRef}
       id="capabilities"
+      aria-labelledby="capabilities-title"
       className="
         relative
         overflow-hidden
@@ -467,6 +468,7 @@ export default function CapabilityNetworkSection() {
             </p>
 
             <h2
+              id="capabilities-title"
               className="
                 section-title
                 max-w-[920px]
@@ -495,12 +497,14 @@ export default function CapabilityNetworkSection() {
                 sm:leading-8
               "
             >
-              Tools change. Systems
-              connect. Explore the
-              security layers,
-              technologies and
-              engineering disciplines
-              behind the work.
+              Explore how application
+              security, secure
+              infrastructure, product
+              architecture, web and app
+              engineering, technical
+              SEO, performance and
+              research connect across
+              the work.
             </p>
           </div>
         </div>
@@ -536,6 +540,7 @@ export default function CapabilityNetworkSection() {
                   key={cluster.id}
                   type="button"
                   aria-pressed={active}
+                  aria-controls="capability-detail"
                   onClick={() =>
                     setActiveCluster(
                       cluster.id
@@ -551,8 +556,13 @@ export default function CapabilityNetworkSection() {
                     border
                     p-5
                     text-left
+                    outline-none
                     transition
                     duration-300
+                    focus-visible:ring-2
+                    focus-visible:ring-cyan-300/70
+                    focus-visible:ring-offset-2
+                    focus-visible:ring-offset-[#080b0f]
 
                     ${
                       active
@@ -686,6 +696,7 @@ export default function CapabilityNetworkSection() {
                       </span>
 
                       <span
+                        aria-hidden="true"
                         className="
                           text-cyan-200
                           transition
@@ -873,6 +884,7 @@ export default function CapabilityNetworkSection() {
           </svg>
 
           <div
+            aria-hidden="true"
             className="
               absolute
               left-1/2
@@ -904,6 +916,7 @@ export default function CapabilityNetworkSection() {
                   inset-[16px]
                   animate-[spin_18s_linear_infinite]
                   rounded-full
+                  motion-reduce:animate-none
                   border
                   border-dashed
                   border-cyan-300/20
@@ -970,6 +983,7 @@ export default function CapabilityNetworkSection() {
                   key={cluster.id}
                   type="button"
                   aria-pressed={active}
+                  aria-controls="capability-detail"
                   onMouseEnter={() =>
                     setActiveCluster(
                       cluster.id
@@ -998,8 +1012,14 @@ export default function CapabilityNetworkSection() {
                     py-4
                     text-left
                     backdrop-blur-xl
+                    outline-none
                     transition-[transform,border-color,background-color,box-shadow,opacity]
                     duration-500
+                    focus-visible:ring-2
+                    focus-visible:ring-cyan-300/70
+                    focus-visible:ring-offset-2
+                    focus-visible:ring-offset-[#090e13]
+                    motion-reduce:transition-none
                     ease-out
 
                     ${
@@ -1113,6 +1133,7 @@ export default function CapabilityNetworkSection() {
         </div>
 
         <div
+          id="capability-detail"
           className="
             mt-5
             overflow-hidden
@@ -1226,6 +1247,7 @@ export default function CapabilityNetworkSection() {
                           connection
                         }
                         type="button"
+                        aria-controls="capability-detail"
                         onClick={() =>
                           setActiveCluster(
                             connection
@@ -1244,9 +1266,14 @@ export default function CapabilityNetworkSection() {
                           tracking-[0.09em]
                           text-[#c0c9cf]
                           uppercase
+                          outline-none
                           transition
 
                           hover:border-cyan-300/30
+                          focus-visible:ring-2
+                          focus-visible:ring-cyan-300/70
+                          focus-visible:ring-offset-2
+                          focus-visible:ring-offset-[#0b1016]
                           hover:text-cyan-100
 
                           sm:text-[11px]
@@ -1363,6 +1390,7 @@ export default function CapabilityNetworkSection() {
                         </span>
 
                         <span
+                          aria-hidden="true"
                           className="
                             h-1.5
                             w-1.5
@@ -1412,12 +1440,19 @@ export default function CapabilityNetworkSection() {
 
           <p
             className="
+              max-w-[760px]
               text-[14px]
+              leading-6
               text-[#a8b4bd]
+              sm:text-right
             "
           >
-            Projects become the
-            proof layer.
+            Projects become the proof
+            layer where cybersecurity,
+            infrastructure, product
+            engineering, development,
+            search performance and
+            research converge.
           </p>
         </div>
       </div>

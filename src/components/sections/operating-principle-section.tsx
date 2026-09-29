@@ -16,35 +16,35 @@ const stages = [
     number: "01",
     name: "Build",
     description:
-      "Design and engineer digital products, applications and scalable systems.",
+      "Design product architecture and engineer web, app and SaaS systems with clear structure and scalable foundations.",
     tags: [
-      "Web",
-      "App",
+      "Web Engineering",
+      "App Engineering",
       "SaaS",
-      "Architecture",
+      "Product Architecture",
     ],
   },
   {
     number: "02",
     name: "Secure",
     description:
-      "Integrate security thinking across applications, identities, APIs and infrastructure.",
+      "Apply application security, API security, access control and security architecture across product and infrastructure boundaries.",
     tags: [
-      "AppSec",
-      "OWASP",
+      "Application Security",
+      "API Security",
       "Access Control",
-      "Security Architecture",
+      "OWASP",
     ],
   },
   {
     number: "03",
     name: "Verify",
     description:
-      "Test assumptions, validate security controls and inspect system behavior before trust is established.",
+      "Use vulnerability assessment, penetration testing and security validation to test assumptions before trust is established.",
     tags: [
       "VAPT",
-      "Validation",
-      "Security Testing",
+      "Penetration Testing",
+      "Vulnerability Analysis",
       "QA",
     ],
   },
@@ -52,36 +52,36 @@ const stages = [
     number: "04",
     name: "Operate",
     description:
-      "Understand the environment behind the product, including servers, networks, hosting and deployment.",
+      "Operate and harden Linux, hosting and server environments across DNS, Cloudflare and deployment infrastructure.",
     tags: [
       "Linux",
-      "DNS",
+      "Server Hardening",
       "Cloudflare",
-      "Server",
+      "DNS",
     ],
   },
   {
     number: "05",
     name: "Optimize",
     description:
-      "Improve performance, technical discoverability and the systems that connect products to search.",
+      "Improve web performance, Core Web Vitals, technical SEO, structured data and modern search discoverability.",
     tags: [
-      "Performance",
       "Technical SEO",
-      "AEO",
-      "GEO",
+      "Core Web Vitals",
+      "Structured Data",
+      "AEO | GEO",
     ],
   },
   {
     number: "06",
     name: "Evolve",
     description:
-      "Research, experiment and adapt systems using emerging technologies and AI assisted engineering.",
+      "Research and evolve systems through security research, technical research, AI assisted engineering and emerging technology.",
     tags: [
-      "AI",
-      "Research",
-      "Automation",
-      "Experiments",
+      "Security Research",
+      "Technical Research",
+      "AI Assisted Engineering",
+      "Emerging Technology",
     ],
   },
 ];
@@ -282,6 +282,7 @@ export default function OperatingPrincipleSection() {
     <section
       ref={sectionRef}
       id="principle"
+      aria-labelledby="system-logic-title"
       className="
         relative
         overflow-hidden
@@ -359,6 +360,7 @@ export default function OperatingPrincipleSection() {
             </p>
 
             <h2
+              id="system-logic-title"
               className="
                 section-title
                 max-w-[940px]
@@ -390,15 +392,18 @@ export default function OperatingPrincipleSection() {
             >
               A digital product is
               more than an interface.
-              I approach it as a
-              connected system that
-              must be engineered,
-              secured, verified,
-              operated, optimized and
-              continuously improved.
+              My operating model
+              connects product
+              engineering, application
+              security, security
+              testing, infrastructure,
+              performance, technical
+              SEO and research across
+              one continuous lifecycle.
             </p>
 
             <div
+              aria-hidden="true"
               className="
                 mt-6
                 flex
@@ -455,6 +460,7 @@ export default function OperatingPrincipleSection() {
 
           <div
             ref={progressRef}
+            aria-hidden="true"
             className="
               absolute
               left-0
@@ -523,10 +529,11 @@ export default function OperatingPrincipleSection() {
           </div>
         </div>
 
-        <div
+        <ol
           className="
             principle-stage-grid
             grid
+            list-none
             min-w-0
             grid-cols-1
             items-stretch
@@ -552,7 +559,7 @@ export default function OperatingPrincipleSection() {
                 activeStage;
 
               return (
-                <article
+                <li
                   key={stage.name}
                   aria-current={
                     isActive
@@ -783,11 +790,11 @@ export default function OperatingPrincipleSection() {
                   >
                     {stage.number}
                   </span>
-                </article>
+                </li>
               );
             }
           )}
-        </div>
+        </ol>
 
         <div
           className="
@@ -810,12 +817,20 @@ export default function OperatingPrincipleSection() {
 
           <p
             className="
+              max-w-[760px]
               text-[14px]
+              leading-6
               text-[#a8b4bd]
+              sm:text-right
             "
           >
-            Building is only the
-            first layer.
+            Product architecture,
+            application security,
+            penetration testing,
+            infrastructure,
+            performance and search
+            engineering operate as one
+            connected lifecycle.
           </p>
         </div>
       </div>

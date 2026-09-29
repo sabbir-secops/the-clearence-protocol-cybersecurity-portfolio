@@ -84,7 +84,7 @@ const searchLayers: SearchLayer[] = [
     shortName: "Technical SEO",
     status: "Auditing",
     description:
-      "Technical SEO connects search systems with the underlying structure, accessibility and health of a website.",
+      "Technical SEO connects crawlability, indexing, canonicalization and site health with the underlying structure of a website.",
     role:
       "Keep pages accessible to search systems while identifying technical issues that can limit indexing and discoverability.",
     signals: [
@@ -126,12 +126,12 @@ const searchLayers: SearchLayer[] = [
     shortName: "Structured Data",
     status: "Mapping",
     description:
-      "Machine readable data gives search systems additional context about pages, entities, products, organizations and content.",
+      "Structured data and JSON-LD give search systems machine readable context about pages, entities, products, organizations and content.",
     role:
       "Add structured context so digital content can be interpreted more accurately by modern search systems.",
     signals: [
       "Schema",
-      "JSON LD",
+      "JSON-LD",
       "Entity Markup",
       "Organization Data",
       "Product Data",
@@ -147,7 +147,7 @@ const searchLayers: SearchLayer[] = [
     shortName: "Semantic",
     status: "Connecting",
     description:
-      "Semantic and entity based thinking connects topics, concepts and relationships instead of treating search as isolated keywords.",
+      "Semantic SEO and entity based thinking connect topics, concepts and relationships instead of treating search as isolated keywords.",
     role:
       "Build stronger contextual relationships between content, entities and the wider information architecture.",
     signals: [
@@ -168,7 +168,7 @@ const searchLayers: SearchLayer[] = [
     shortName: "AEO",
     status: "Answering",
     description:
-      "Answer focused optimization structures information so modern search experiences can understand and surface useful responses.",
+      "Answer Engine Optimization structures clear, direct information so modern search experiences can understand and surface useful responses.",
     role:
       "Make important information easier to interpret, retrieve and present across answer based search experiences.",
     signals: [
@@ -189,7 +189,7 @@ const searchLayers: SearchLayer[] = [
     shortName: "GEO",
     status: "Evolving",
     description:
-      "Generative search introduces new discovery surfaces where context, authority and machine readable information become increasingly important.",
+      "Generative Engine Optimization explores AI search and emerging discovery surfaces where entity context, source clarity and machine readable information matter.",
     role:
       "Explore how content and technical systems can remain understandable across emerging AI driven discovery environments.",
     signals: [
@@ -353,6 +353,7 @@ export default function SearchPerformanceSection() {
     <section
       ref={sectionRef}
       id="search-performance"
+      aria-labelledby="search-performance-title"
       className="
         relative
         overflow-hidden
@@ -413,6 +414,7 @@ export default function SearchPerformanceSection() {
             </p>
 
             <h2
+              id="search-performance-title"
               className="
                 section-title
                 max-w-[940px]
@@ -444,11 +446,11 @@ export default function SearchPerformanceSection() {
               Performance and
               discoverability are part
               of the engineering
-              process. I connect
-              technical SEO, site
-              architecture, structured
-              information and modern
-              search systems with the
+              process. I connect Core
+              Web Vitals, technical SEO,
+              site architecture,
+              structured data, semantic
+              SEO, AEO and GEO with the
               performance layer behind
               the product.
             </p>
@@ -482,7 +484,10 @@ export default function SearchPerformanceSection() {
               gap-3
             "
           >
-            <span className="status-dot" />
+            <span
+              aria-hidden="true"
+              className="status-dot"
+            />
 
             <span className="tiny-mono">
               Discoverability System | Active
@@ -573,6 +578,7 @@ export default function SearchPerformanceSection() {
                     key={layer.id}
                     type="button"
                     aria-pressed={active}
+                    aria-controls="search-detail"
                     onClick={() =>
                       setActiveLayer(
                         layer.id
@@ -588,8 +594,14 @@ export default function SearchPerformanceSection() {
                       border
                       p-5
                       text-left
+                      outline-none
                       transition
                       duration-300
+                      focus-visible:ring-2
+                      focus-visible:ring-cyan-300/70
+                      focus-visible:ring-offset-2
+                      focus-visible:ring-offset-[#090e13]
+                      motion-reduce:transition-none
 
                       ${
                         active
@@ -707,6 +719,7 @@ export default function SearchPerformanceSection() {
                         </span>
 
                         <span
+                          aria-hidden="true"
                           className="
                             text-cyan-200
                             transition
@@ -762,6 +775,7 @@ export default function SearchPerformanceSection() {
                 transition-[width,opacity]
                 duration-500
                 ease-out
+                motion-reduce:transition-none
               "
               style={{
                 width: `${
@@ -805,6 +819,7 @@ export default function SearchPerformanceSection() {
                       aria-pressed={
                         active
                       }
+                      aria-controls="search-detail"
                       onFocus={() =>
                         setActiveLayer(
                           layer.id
@@ -824,9 +839,15 @@ export default function SearchPerformanceSection() {
                         flex-col
                         items-center
                         text-center
+                        outline-none
                         transition-[transform,opacity]
                         duration-500
                         ease-out
+                        focus-visible:ring-2
+                        focus-visible:ring-cyan-300/70
+                        focus-visible:ring-offset-4
+                        focus-visible:ring-offset-[#090e13]
+                        motion-reduce:transition-none
 
                         ${
                           active
@@ -1000,6 +1021,7 @@ export default function SearchPerformanceSection() {
         </div>
 
         <div
+          id="search-detail"
           className="
             search-detail-panel
             mt-5
@@ -1112,7 +1134,10 @@ export default function SearchPerformanceSection() {
                   pt-5
                 "
               >
-                <span className="status-dot" />
+                <span
+                  aria-hidden="true"
+                  className="status-dot"
+                />
 
                 <div>
                   <p className="tiny-mono">
@@ -1220,6 +1245,7 @@ export default function SearchPerformanceSection() {
                         </span>
 
                         <span
+                          aria-hidden="true"
                           className="
                             h-1.5
                             w-1.5
@@ -1277,9 +1303,12 @@ export default function SearchPerformanceSection() {
             "
           >
             Discoverability works best
-            when content, architecture
-            and technical performance
-            operate as one system.
+            when Core Web Vitals,
+            technical SEO, structured
+            data, semantic context and
+            answer or AI search
+            surfaces operate as one
+            system.
           </p>
         </div>
       </div>

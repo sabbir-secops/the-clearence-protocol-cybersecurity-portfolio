@@ -34,6 +34,8 @@ const accentClasses = {
     line: "bg-cyan-300/35",
     shadow:
       "shadow-[0_0_18px_rgba(85,221,255,0.24)]",
+    interactive:
+      "hover:border-cyan-300/30 hover:bg-cyan-300/[0.025] hover:shadow-[0_18px_50px_rgba(85,221,255,0.07)]",
   },
   blue: {
     text: "text-sky-200",
@@ -49,6 +51,8 @@ const accentClasses = {
     line: "bg-sky-300/35",
     shadow:
       "shadow-[0_0_18px_rgba(31,113,148,0.28)]",
+    interactive:
+      "hover:border-sky-300/30 hover:bg-sky-300/[0.025] hover:shadow-[0_18px_50px_rgba(31,113,148,0.08)]",
   },
   violet: {
     text: "text-violet-200",
@@ -66,6 +70,8 @@ const accentClasses = {
     line: "bg-violet-300/35",
     shadow:
       "shadow-[0_0_18px_rgba(120,109,255,0.26)]",
+    interactive:
+      "hover:border-violet-300/30 hover:bg-violet-300/[0.025] hover:shadow-[0_18px_50px_rgba(120,109,255,0.08)]",
   },
   white: {
     text: "text-slate-100",
@@ -80,9 +86,16 @@ const accentClasses = {
     line: "bg-white/25",
     shadow:
       "shadow-[0_0_18px_rgba(223,248,255,0.16)]",
+    interactive:
+      "hover:border-white/25 hover:bg-white/[0.035] hover:shadow-[0_18px_50px_rgba(223,248,255,0.05)]",
   },
 } as const;
 
+const interactiveSurface =
+  "motion-safe:transition-[transform,border-color,background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:-translate-y-0.5";
+
+const interactivePanel =
+  "motion-safe:transition-[border-color,background-color,box-shadow] motion-safe:duration-300 motion-safe:ease-out";
 
 const caseVisuals: Record<
   string,
@@ -397,6 +410,7 @@ export default function DeepDiveShell({
               outline-none
               transition
               hover:text-cyan-100
+              motion-safe:hover:-translate-x-0.5
               focus-visible:ring-2
               ${accent.ring}
               focus-visible:ring-offset-2
@@ -618,7 +632,9 @@ export default function DeepDiveShell({
                   bg-[#0b1016]/90
                   p-5
                   sm:p-6
+                  ${interactivePanel}
                   ${accent.border}
+                  ${accent.interactive}
                 `}
               >
                 <div
@@ -770,9 +786,11 @@ export default function DeepDiveShell({
                       font-semibold
                       tracking-[0.08em]
                       uppercase
+                      ${interactivePanel}
                       ${accent.border}
                       ${accent.bg}
                       ${accent.text}
+                      ${accent.interactive}
                     `}
                   >
                     {item}
@@ -792,6 +810,11 @@ export default function DeepDiveShell({
                 p-5
                 sm:p-6
                 lg:p-7
+                motion-safe:transition-[border-color,background-color,box-shadow]
+                motion-safe:duration-300
+                hover:border-white/[0.16]
+                hover:bg-[#0b1118]
+                hover:shadow-[0_18px_50px_rgba(0,0,0,0.20)]
               "
             >
               <div
@@ -889,13 +912,15 @@ export default function DeepDiveShell({
                   "
                 >
                   <article
-                    className="
+                    className={`
                       rounded-[18px]
                       border
                       border-white/[0.09]
                       bg-white/[0.025]
                       p-5
-                    "
+                      ${interactiveSurface}
+                      ${accent.interactive}
+                    `}
                   >
                     <h3
                       className="
@@ -920,13 +945,15 @@ export default function DeepDiveShell({
                   </article>
 
                   <article
-                    className="
+                    className={`
                       rounded-[18px]
                       border
                       border-white/[0.09]
                       bg-white/[0.025]
                       p-5
-                    "
+                      ${interactiveSurface}
+                      ${accent.interactive}
+                    `}
                   >
                     <h3
                       className="
@@ -1008,14 +1035,16 @@ export default function DeepDiveShell({
               "
             >
               <div
-                className="
+                className={`
                   rounded-[22px]
                   border
                   border-white/[0.10]
                   bg-[#0b1016]
                   p-5
                   sm:p-6
-                "
+                  ${interactivePanel}
+                  ${accent.interactive}
+                `}
               >
                 <p
                   className="
@@ -1078,6 +1107,8 @@ export default function DeepDiveShell({
                         bg-[#0d141b]
                         p-5
                         sm:col-span-6
+                        ${interactiveSurface}
+                        ${accent.interactive}
                         ${getBalancedFourColumnSpan(
                           index,
                           caseStudy.problem.points.length
@@ -1157,7 +1188,9 @@ export default function DeepDiveShell({
                 p-4
                 sm:p-5
                 lg:p-6
+                ${interactivePanel}
                 ${accent.border}
+                ${accent.interactive}
               `}
             >
               <div
@@ -1235,6 +1268,7 @@ export default function DeepDiveShell({
                       <li
                         key={step}
                         className={`
+                          group
                           relative
                           col-span-12
                           min-h-[118px]
@@ -1243,6 +1277,8 @@ export default function DeepDiveShell({
                           bg-[#0c1218]
                           p-4
                           sm:col-span-6
+                          ${interactiveSurface}
+                          ${accent.interactive}
                           ${getBalancedFourColumnSpan(
                             index,
                             caseStudy.architecture.flow.length
@@ -1325,6 +1361,11 @@ export default function DeepDiveShell({
                                 h-px
                                 w-[13px]
                                 -translate-y-1/2
+                                opacity-60
+                                transition-[opacity,transform]
+                                duration-300
+                                group-hover:opacity-100
+                                motion-safe:group-hover:scale-x-110
                                 xl:block
                                 ${accent.line}
                               `}
@@ -1361,6 +1402,8 @@ export default function DeepDiveShell({
                       bg-[#0b1016]
                       p-5
                       md:col-span-6
+                      ${interactiveSurface}
+                      ${accent.interactive}
                       ${getBalancedThreeColumnSpan(
                         index,
                         caseStudy.architecture.nodes.length
@@ -1461,8 +1504,10 @@ export default function DeepDiveShell({
                           rounded-[18px]
                           border
                           p-5
+                          ${interactiveSurface}
                           ${accent.border}
                           ${accent.bg}
+                          ${accent.interactive}
                         `}
                       >
                         <span className="tiny-mono">
@@ -1558,6 +1603,8 @@ export default function DeepDiveShell({
                       bg-[#0d141b]
                       p-5
                       sm:col-span-6
+                      ${interactiveSurface}
+                      ${accent.interactive}
                       ${getBalancedFourColumnSpan(
                         index,
                         caseStudy.workflow.steps.length
@@ -1661,6 +1708,8 @@ export default function DeepDiveShell({
                       bg-[#0b1016]
                       p-5
                       sm:p-6
+                      ${interactiveSurface}
+                      ${accent.interactive}
                       ${getBalancedTwoColumnSpan(
                         index,
                         caseStudy.decisions.length
@@ -1835,8 +1884,8 @@ export default function DeepDiveShell({
                       border
                       border-white/[0.10]
                       bg-[#0b1016]
-                      transition-colors
-                      hover:border-white/[0.16]
+                      ${interactivePanel}
+                      ${accent.interactive}
                       open:border-white/[0.20]
                       open:bg-[#0c1218]
                       ${getBalancedTwoColumnSpan(
@@ -1956,7 +2005,9 @@ export default function DeepDiveShell({
                             text-[20px]
                             transition-transform
                             duration-300
+                            group-hover:scale-110
                             group-open:rotate-45
+                            motion-reduce:transition-none
                             ${accent.text}
                           `}
                         >
@@ -2090,6 +2141,10 @@ export default function DeepDiveShell({
                         sm:p-6
                         md:grid-cols-[160px_220px_minmax(0,1fr)]
                         md:items-start
+                        transition-colors
+                        duration-300
+                        hover:bg-white/[0.02]
+                        motion-reduce:transition-none
                       "
                     >
                       <p className="tiny-mono">
@@ -2179,6 +2234,8 @@ export default function DeepDiveShell({
                         bg-[#0d141b]
                         p-5
                         sm:col-span-6
+                        ${interactiveSurface}
+                        ${accent.interactive}
                         ${getBalancedFourColumnSpan(
                           index,
                           caseStudy.currentState.length
@@ -2210,8 +2267,10 @@ export default function DeepDiveShell({
                   border
                   p-5
                   sm:p-6
+                  ${interactivePanel}
                   ${accent.borderStrong}
                   ${accent.bg}
+                  ${accent.interactive}
                 `}
               >
                 <p
@@ -2310,6 +2369,9 @@ export default function DeepDiveShell({
                         secondary-btn
                         min-w-0
                         outline-none
+                        transition
+                        ${accent.interactive}
+                        motion-safe:hover:-translate-x-0.5
                         focus-visible:ring-2
                         ${accent.ring}
                       `}
@@ -2324,6 +2386,9 @@ export default function DeepDiveShell({
                       secondary-btn
                       min-w-0
                       outline-none
+                      transition
+                      ${accent.interactive}
+                      motion-safe:hover:-translate-y-0.5
                       focus-visible:ring-2
                       ${accent.ring}
                     `}
@@ -2338,6 +2403,9 @@ export default function DeepDiveShell({
                         secondary-btn
                         min-w-0
                         outline-none
+                        transition
+                        ${accent.interactive}
+                        motion-safe:hover:translate-x-0.5
                         focus-visible:ring-2
                         ${accent.ring}
                       `}
@@ -2354,6 +2422,5 @@ export default function DeepDiveShell({
     </div>
   );
 }
-
 
 
