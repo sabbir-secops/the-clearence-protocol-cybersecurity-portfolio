@@ -424,12 +424,12 @@ export default function IdentitySection() {
             <p
               className="
                 identity-reveal
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
 
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               My work sits at
@@ -443,12 +443,12 @@ export default function IdentitySection() {
             <p
               className="
                 identity-reveal
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
 
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               I approach products
@@ -464,12 +464,12 @@ export default function IdentitySection() {
             <p
               className="
                 identity-reveal
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
 
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               My security work spans
@@ -485,11 +485,11 @@ export default function IdentitySection() {
             <p
               className="
                 identity-reveal
-                text-[18px]
+                text-[17px]
                 font-medium
                 text-[#eef5f8]
 
-                sm:text-[20px]
+                sm:text-[18px]
               "
             >
               Building is only
@@ -1063,7 +1063,7 @@ export default function IdentitySection() {
                   className="
                     mt-2
                     break-words
-                    text-[18px]
+                    text-[17px]
                     font-medium
                     text-[#eef5f8]
                   "
@@ -1081,7 +1081,7 @@ export default function IdentitySection() {
                   className="
                     mt-2
                     break-words
-                    text-[18px]
+                    text-[17px]
                     font-medium
                     leading-7
                     text-[#eef5f8]

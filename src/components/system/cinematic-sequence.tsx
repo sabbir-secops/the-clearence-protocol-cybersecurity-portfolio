@@ -10,15 +10,25 @@ import {
 
 type CinematicId =
   | "boot"
+  | "profile"
+  | "capabilities"
   | "security"
   | "archive"
+  | "infrastructure"
+  | "search"
+  | "research"
   | "confidential"
   | "contact";
 
 type CinematicVariant =
   | "boot"
+  | "profile"
+  | "capability"
   | "scan"
   | "records"
+  | "infrastructure"
+  | "search"
+  | "intelligence"
   | "restricted"
   | "connection";
 
@@ -76,10 +86,34 @@ const CINEMATICS: Record<
     variant: "boot",
     label: "SYSTEM ACCESS VERIFIED",
     status: "INITIALIZING ENVIRONMENT",
-    duration: 2667,
+    duration: 5334,
     frameCount: 64,
     framePath:
       "/cinematic/boot-hero/frame-",
+    frameExtension: "webp",
+  },
+
+  profile: {
+    id: "profile",
+    variant: "profile",
+    label: "SYSTEM PROFILE",
+    status: "IDENTITY SIGNAL VERIFIED",
+    duration: 1350,
+    frameCount: 0,
+    framePath:
+      "/cinematic/profile/frame-",
+    frameExtension: "webp",
+  },
+
+  capabilities: {
+    id: "capabilities",
+    variant: "capability",
+    label: "CAPABILITY MAP",
+    status: "CAPABILITY NETWORK SYNCHRONIZED",
+    duration: 1450,
+    frameCount: 0,
+    framePath:
+      "/cinematic/capabilities/frame-",
     frameExtension: "webp",
   },
 
@@ -104,6 +138,42 @@ const CINEMATICS: Record<
     frameCount: 0,
     framePath:
       "/cinematic/archive/frame-",
+    frameExtension: "webp",
+  },
+
+  infrastructure: {
+    id: "infrastructure",
+    variant: "infrastructure",
+    label: "INFRASTRUCTURE",
+    status: "ROUTING LAYERS ONLINE",
+    duration: 1450,
+    frameCount: 0,
+    framePath:
+      "/cinematic/infrastructure/frame-",
+    frameExtension: "webp",
+  },
+
+  search: {
+    id: "search",
+    variant: "search",
+    label: "SEARCH AND PERFORMANCE",
+    status: "SIGNAL QUALITY SYNCHRONIZED",
+    duration: 1400,
+    frameCount: 0,
+    framePath:
+      "/cinematic/search/frame-",
+    frameExtension: "webp",
+  },
+
+  research: {
+    id: "research",
+    variant: "intelligence",
+    label: "RESEARCH AND INTELLIGENCE",
+    status: "INTELLIGENCE CHANNEL ACTIVE",
+    duration: 1500,
+    frameCount: 0,
+    framePath:
+      "/cinematic/research/frame-",
     frameExtension: "webp",
   },
 
@@ -156,6 +226,918 @@ function getFrameUrl(
   return `${config.framePath}${padFrame(
     frame
   )}.${config.frameExtension}`;
+}
+
+function ProfileVisual({
+  active,
+}: {
+  active: boolean;
+}) {
+  const signals = [
+    "IDENTITY",
+    "ROLE",
+    "ACCESS",
+  ];
+
+  return (
+    <div
+      className="
+        pointer-events-none
+        absolute
+        inset-0
+        flex
+        items-center
+        justify-center
+      "
+    >
+      <div
+        className={`
+          relative
+          w-[84%]
+          max-w-[760px]
+          transition-all
+          duration-[900ms]
+
+          ${
+            active
+              ? "scale-100 opacity-100"
+              : "scale-[0.94] opacity-0"
+          }
+        `}
+      >
+        <div
+          className="
+            absolute
+            left-1/2
+            top-1/2
+            h-[190px]
+            w-[190px]
+            -translate-x-1/2
+            -translate-y-1/2
+            rounded-full
+            border
+            border-cyan-300/12
+            sm:h-[250px]
+            sm:w-[250px]
+            lg:h-[310px]
+            lg:w-[310px]
+          "
+        />
+
+        <div
+          className="
+            relative
+            grid
+            gap-2.5
+            sm:grid-cols-3
+            sm:gap-4
+          "
+        >
+          {signals.map(
+            (
+              signal,
+              index
+            ) => (
+              <div
+                key={signal}
+                className={`
+                  relative
+                  overflow-hidden
+                  border
+                  border-cyan-200/10
+                  bg-cyan-200/[0.018]
+                  px-4
+                  py-4
+                  transition-all
+                  duration-700
+                  sm:px-5
+                  sm:py-6
+
+                  ${
+                    active
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-5 opacity-0"
+                  }
+                `}
+                style={{
+                  transitionDelay:
+                    `${index * 90}ms`,
+                }}
+              >
+                <div
+                  className="
+                    mb-5
+                    flex
+                    items-center
+                    gap-2
+                  "
+                >
+                  <span
+                    className="
+                      h-1.5
+                      w-1.5
+                      rounded-full
+                      bg-cyan-200
+                      shadow-[0_0_12px_rgba(72,215,255,0.65)]
+                    "
+                  />
+
+                  <span
+                    className="
+                      font-mono
+                      text-[8px]
+                      tracking-[0.18em]
+                      text-cyan-100/55
+                    "
+                  >
+                    SIGNAL {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <p
+                  className="
+                    text-[11px]
+                    font-medium
+                    tracking-[0.16em]
+                    text-white/72
+                    sm:text-[12px]
+                  "
+                >
+                  {signal}
+                </p>
+
+                <div
+                  className="
+                    mt-3
+                    h-px
+                    w-full
+                    bg-white/[0.08]
+                  "
+                >
+                  <div
+                    className={`
+                      h-full
+                      bg-cyan-200/55
+                      shadow-[0_0_10px_rgba(72,215,255,0.4)]
+                      transition-all
+                      duration-[900ms]
+
+                      ${
+                        active
+                          ? "w-full"
+                          : "w-0"
+                      }
+                    `}
+                    style={{
+                      transitionDelay:
+                        `${180 + index * 90}ms`,
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          )}
+        </div>
+
+        <div
+          className={`
+            mx-auto
+            mt-4
+            h-px
+            max-w-[520px]
+            bg-cyan-200/35
+            shadow-[0_0_16px_rgba(72,215,255,0.35)]
+            transition-all
+            duration-[1000ms]
+
+            ${
+              active
+                ? "w-[82%] opacity-100"
+                : "w-0 opacity-0"
+            }
+          `}
+        />
+      </div>
+    </div>
+  );
+}
+
+function CapabilityVisual({
+  active,
+}: {
+  active: boolean;
+}) {
+  const nodes = [
+    "SECURITY",
+    "INFRASTRUCTURE",
+    "PRODUCT",
+    "ENGINEERING",
+    "SEARCH",
+    "RESEARCH",
+  ];
+
+  return (
+    <div
+      className="
+        pointer-events-none
+        absolute
+        inset-0
+        flex
+        items-center
+        justify-center
+      "
+    >
+      <div
+        className="
+          relative
+          h-[330px]
+          w-[330px]
+          max-h-[70vw]
+          max-w-[70vw]
+          sm:h-[430px]
+          sm:w-[430px]
+          lg:h-[520px]
+          lg:w-[520px]
+        "
+      >
+        <div
+          className={`
+            absolute
+            left-1/2
+            top-1/2
+            h-[112px]
+            w-[112px]
+            -translate-x-1/2
+            -translate-y-1/2
+            rounded-full
+            border
+            border-cyan-200/30
+            bg-cyan-200/[0.04]
+            shadow-[0_0_55px_rgba(72,215,255,0.10)]
+            transition-all
+            duration-700
+            sm:h-[142px]
+            sm:w-[142px]
+
+            ${
+              active
+                ? "scale-100 opacity-100"
+                : "scale-[0.65] opacity-0"
+            }
+          `}
+        >
+          <div
+            className="
+              absolute
+              inset-[22%]
+              rounded-full
+              border
+              border-cyan-200/15
+            "
+          />
+
+          <div
+            className="
+              absolute
+              left-1/2
+              top-1/2
+              h-2
+              w-2
+              -translate-x-1/2
+              -translate-y-1/2
+              rounded-full
+              bg-cyan-100
+              shadow-[0_0_22px_rgba(72,215,255,0.9)]
+            "
+          />
+        </div>
+
+        {[0, 1, 2].map(
+          (index) => (
+            <div
+              key={`axis-${index}`}
+              className="
+                absolute
+                left-1/2
+                top-1/2
+                h-px
+                w-[84%]
+                origin-center
+              "
+              style={{
+                transform: `translate(-50%, -50%) rotate(${index * 60}deg)`,
+              }}
+            >
+              <div
+                className={`
+                  h-full
+                  w-full
+                  origin-center
+                  bg-cyan-200/12
+                  transition-all
+                  duration-[1000ms]
+
+                  ${
+                    active
+                      ? "scale-x-100 opacity-100"
+                      : "scale-x-0 opacity-0"
+                  }
+                `}
+              />
+            </div>
+          )
+        )}
+
+        {nodes.map(
+          (
+            node,
+            index
+          ) => {
+            const angle =
+              (Math.PI * 2 * index) /
+                nodes.length -
+              Math.PI / 2;
+
+            const left =
+              50 +
+              Math.cos(angle) * 40;
+
+            const top =
+              50 +
+              Math.sin(angle) * 40;
+
+            return (
+              <div
+                key={node}
+                className={`
+                  absolute
+                  flex
+                  min-w-[78px]
+                  -translate-x-1/2
+                  -translate-y-1/2
+                  items-center
+                  justify-center
+                  border
+                  border-cyan-200/12
+                  bg-[#071016]/80
+                  px-2.5
+                  py-2
+                  font-mono
+                  text-[7px]
+                  tracking-[0.12em]
+                  text-cyan-100/60
+                  transition-all
+                  duration-700
+                  sm:min-w-[100px]
+                  sm:px-3
+                  sm:py-2.5
+                  sm:text-[8px]
+
+                  ${
+                    active
+                      ? "scale-100 opacity-100"
+                      : "scale-[0.72] opacity-0"
+                  }
+                `}
+                style={{
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  transitionDelay:
+                    `${index * 70}ms`,
+                }}
+              >
+                {node}
+              </div>
+            );
+          }
+        )}
+      </div>
+    </div>
+  );
+}
+
+function InfrastructureVisual({
+  active,
+}: {
+  active: boolean;
+}) {
+  const layers = [
+    "CLIENT",
+    "DNS",
+    "EDGE",
+    "DEFENSE",
+    "SERVER",
+    "CONTAINER",
+    "APPLICATION",
+    "DATA",
+  ];
+
+  return (
+    <div
+      className="
+        pointer-events-none
+        absolute
+        inset-0
+        flex
+        items-center
+        justify-center
+      "
+    >
+      <div
+        className="
+          relative
+          w-[82%]
+          max-w-[760px]
+          space-y-2
+          sm:space-y-2.5
+        "
+      >
+        {layers.map(
+          (
+            layer,
+            index
+          ) => (
+            <div
+              key={layer}
+              className={`
+                relative
+                flex
+                h-9
+                items-center
+                gap-3
+                border
+                border-cyan-200/[0.09]
+                bg-cyan-200/[0.014]
+                px-3
+                transition-all
+                duration-700
+                sm:h-10
+                sm:px-4
+
+                ${
+                  active
+                    ? "translate-x-0 opacity-100"
+                    : index % 2 === 0
+                      ? "-translate-x-10 opacity-0"
+                      : "translate-x-10 opacity-0"
+                }
+              `}
+              style={{
+                transitionDelay:
+                  `${index * 70}ms`,
+              }}
+            >
+              <span
+                className="
+                  h-1.5
+                  w-1.5
+                  shrink-0
+                  rounded-full
+                  bg-cyan-200
+                  shadow-[0_0_10px_rgba(72,215,255,0.65)]
+                "
+              />
+
+              <span
+                className="
+                  w-[88px]
+                  shrink-0
+                  font-mono
+                  text-[7px]
+                  tracking-[0.14em]
+                  text-white/42
+                  sm:w-[110px]
+                  sm:text-[8px]
+                "
+              >
+                {layer}
+              </span>
+
+              <div
+                className="
+                  relative
+                  h-px
+                  flex-1
+                  overflow-hidden
+                  bg-white/[0.07]
+                "
+              >
+                <div
+                  className={`
+                    absolute
+                    inset-y-0
+                    left-0
+                    bg-cyan-200/55
+                    shadow-[0_0_12px_rgba(72,215,255,0.45)]
+                    transition-all
+                    duration-[900ms]
+
+                    ${
+                      active
+                        ? "w-full"
+                        : "w-0"
+                    }
+                  `}
+                  style={{
+                    transitionDelay:
+                      `${160 + index * 70}ms`,
+                  }}
+                />
+              </div>
+
+              <span
+                className="
+                  shrink-0
+                  font-mono
+                  text-[7px]
+                  tracking-[0.12em]
+                  text-cyan-200/55
+                  sm:text-[8px]
+                "
+              >
+                ONLINE
+              </span>
+            </div>
+          )
+        )}
+
+        <div
+          className={`
+            absolute
+            bottom-0
+            left-1/2
+            top-0
+            w-px
+            -translate-x-1/2
+            bg-cyan-200/10
+            transition-all
+            duration-[1100ms]
+
+            ${
+              active
+                ? "scale-y-100 opacity-100"
+                : "scale-y-0 opacity-0"
+            }
+          `}
+        />
+      </div>
+    </div>
+  );
+}
+
+function SearchVisual({
+  active,
+}: {
+  active: boolean;
+}) {
+  const channels = [
+    "PERFORMANCE",
+    "TECHNICAL SEO",
+    "STRUCTURED DATA",
+    "AEO | GEO",
+  ];
+
+  return (
+    <div
+      className="
+        pointer-events-none
+        absolute
+        inset-0
+        flex
+        items-center
+        justify-center
+      "
+    >
+      <div
+        className="
+          relative
+          w-[84%]
+          max-w-[780px]
+        "
+      >
+        <div
+          className="
+            grid
+            gap-3
+            sm:grid-cols-2
+            sm:gap-4
+          "
+        >
+          {channels.map(
+            (
+              channel,
+              index
+            ) => (
+              <div
+                key={channel}
+                className={`
+                  border
+                  border-cyan-200/10
+                  bg-cyan-200/[0.015]
+                  p-4
+                  transition-all
+                  duration-700
+                  sm:p-5
+
+                  ${
+                    active
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-4 opacity-0"
+                  }
+                `}
+                style={{
+                  transitionDelay:
+                    `${index * 80}ms`,
+                }}
+              >
+                <div
+                  className="
+                    flex
+                    items-center
+                    justify-between
+                    gap-3
+                  "
+                >
+                  <span
+                    className="
+                      font-mono
+                      text-[8px]
+                      tracking-[0.16em]
+                      text-white/45
+                      sm:text-[9px]
+                    "
+                  >
+                    {channel}
+                  </span>
+
+                  <span
+                    className="
+                      font-mono
+                      text-[7px]
+                      tracking-[0.12em]
+                      text-cyan-200/55
+                    "
+                  >
+                    SYNC
+                  </span>
+                </div>
+
+                <div
+                  className="
+                    mt-4
+                    flex
+                    items-end
+                    gap-1
+                  "
+                >
+                  {[42, 68, 54, 82, 63, 92, 74].map(
+                    (
+                      height,
+                      barIndex
+                    ) => (
+                      <span
+                        key={`${channel}-${barIndex}`}
+                        className={`
+                          block
+                          flex-1
+                          origin-bottom
+                          bg-cyan-200/25
+                          transition-transform
+                          duration-700
+
+                          ${
+                            active
+                              ? "scale-y-100"
+                              : "scale-y-0"
+                          }
+                        `}
+                        style={{
+                          height:
+                            `${Math.max(height * 0.34, 12)}px`,
+                          transitionDelay:
+                            `${180 + index * 60 + barIndex * 35}ms`,
+                        }}
+                      />
+                    )
+                  )}
+                </div>
+              </div>
+            )
+          )}
+        </div>
+
+        <div
+          className={`
+            mx-auto
+            mt-5
+            h-[2px]
+            bg-cyan-200/45
+            shadow-[0_0_18px_rgba(72,215,255,0.4)]
+            transition-all
+            duration-[1100ms]
+
+            ${
+              active
+                ? "w-full opacity-100"
+                : "w-0 opacity-0"
+            }
+          `}
+        />
+      </div>
+    </div>
+  );
+}
+
+function IntelligenceVisual({
+  active,
+}: {
+  active: boolean;
+}) {
+  const nodes = [
+    [50, 18],
+    [24, 34],
+    [76, 34],
+    [18, 64],
+    [82, 64],
+    [38, 78],
+    [62, 78],
+  ];
+
+  return (
+    <div
+      className="
+        pointer-events-none
+        absolute
+        inset-0
+        flex
+        items-center
+        justify-center
+      "
+    >
+      <div
+        className="
+          relative
+          h-[320px]
+          w-[86%]
+          max-w-[720px]
+          sm:h-[400px]
+          lg:h-[470px]
+        "
+      >
+        <div
+          className={`
+            absolute
+            left-1/2
+            top-1/2
+            h-[128px]
+            w-[128px]
+            -translate-x-1/2
+            -translate-y-1/2
+            rotate-45
+            border
+            border-cyan-200/18
+            transition-all
+            duration-[900ms]
+            sm:h-[170px]
+            sm:w-[170px]
+
+            ${
+              active
+                ? "scale-100 opacity-100"
+                : "scale-[0.65] opacity-0"
+            }
+          `}
+        />
+
+        <div
+          className={`
+            absolute
+            left-1/2
+            top-1/2
+            h-[74px]
+            w-[74px]
+            -translate-x-1/2
+            -translate-y-1/2
+            rounded-full
+            border
+            border-cyan-100/22
+            bg-cyan-200/[0.035]
+            shadow-[0_0_44px_rgba(72,215,255,0.12)]
+            transition-all
+            delay-150
+            duration-700
+
+            ${
+              active
+                ? "scale-100 opacity-100"
+                : "scale-0 opacity-0"
+            }
+          `}
+        />
+
+        {nodes.map(
+          (
+            [left, top],
+            index
+          ) => (
+            <div
+              key={`${left}-${top}`}
+              className={`
+                absolute
+                h-3
+                w-3
+                -translate-x-1/2
+                -translate-y-1/2
+                rounded-full
+                border
+                border-cyan-200/40
+                bg-cyan-200/10
+                shadow-[0_0_16px_rgba(72,215,255,0.28)]
+                transition-all
+                duration-600
+
+                ${
+                  active
+                    ? "scale-100 opacity-100"
+                    : "scale-0 opacity-0"
+                }
+              `}
+              style={{
+                left: `${left}%`,
+                top: `${top}%`,
+                transitionDelay:
+                  `${index * 75}ms`,
+              }}
+            />
+          )
+        )}
+
+        {nodes.map(
+          (
+            [left, top],
+            index
+          ) => {
+            const deltaX =
+              50 - left;
+
+            const deltaY =
+              50 - top;
+
+            const length =
+              Math.sqrt(
+                deltaX * deltaX +
+                  deltaY * deltaY
+              );
+
+            const angle =
+              Math.atan2(
+                deltaY,
+                deltaX
+              ) *
+              (180 / Math.PI);
+
+            return (
+              <div
+                key={`link-${left}-${top}`}
+                className="
+                  absolute
+                  h-px
+                  origin-left
+                "
+                style={{
+                  left: `${left}%`,
+                  top: `${top}%`,
+                  width: `${length}%`,
+                  transform: `rotate(${angle}deg)`,
+                }}
+              >
+                <div
+                  className={`
+                    h-full
+                    w-full
+                    origin-left
+                    bg-cyan-200/12
+                    transition-all
+                    duration-[900ms]
+
+                    ${
+                      active
+                        ? "scale-x-100 opacity-100"
+                        : "scale-x-0 opacity-0"
+                    }
+                  `}
+                  style={{
+                    transitionDelay:
+                      `${120 + index * 55}ms`,
+                  }}
+                />
+              </div>
+            );
+          }
+        )}
+      </div>
+    </div>
+  );
 }
 
 function SecurityVisual({
@@ -1046,34 +2028,49 @@ export default function CinematicSequence() {
         const imageHeight =
           image.naturalHeight;
 
-        const scale =
+        const sourceSize =
           Math.min(
-            canvasWidth /
-              imageWidth,
-            canvasHeight /
-              imageHeight
+            imageWidth,
+            imageHeight
           );
 
-        const drawWidth =
-          imageWidth *
-          scale;
+        const sourceX =
+          (
+            imageWidth -
+            sourceSize
+          ) /
+          2;
 
-        const drawHeight =
-          imageHeight *
-          scale;
+        const sourceY =
+          (
+            imageHeight -
+            sourceSize
+          ) /
+          2;
+
+        const diameter =
+          Math.min(
+            canvasWidth,
+            canvasHeight
+          ) *
+          0.84;
 
         const drawX =
           (
             canvasWidth -
-            drawWidth
+            diameter
           ) /
           2;
 
         const drawY =
           (
             canvasHeight -
-            drawHeight
+            diameter
           ) /
+          2;
+
+        const radius =
+          diameter /
           2;
 
         context.clearRect(
@@ -1083,13 +2080,33 @@ export default function CinematicSequence() {
           canvasHeight
         );
 
+        context.save();
+
+        context.beginPath();
+
+        context.arc(
+          canvasWidth / 2,
+          canvasHeight / 2,
+          radius,
+          0,
+          Math.PI * 2
+        );
+
+        context.clip();
+
         context.drawImage(
           image,
+          sourceX,
+          sourceY,
+          sourceSize,
+          sourceSize,
           drawX,
           drawY,
-          drawWidth,
-          drawHeight
+          diameter,
+          diameter
         );
+
+        context.restore();
       },
       []
     );
@@ -1230,10 +2247,24 @@ export default function CinematicSequence() {
                 1
               );
 
+            const frameProgress =
+              config.id ===
+              "boot"
+                ? progress <=
+                  0.5
+                  ? progress *
+                    2
+                  : (
+                      1 -
+                      progress
+                    ) *
+                    2
+                : progress;
+
             const frameIndex =
               Math.min(
                 Math.floor(
-                  progress *
+                  frameProgress *
                     (
                       images.length -
                       1
@@ -1273,18 +2304,23 @@ export default function CinematicSequence() {
                   animate
                 );
             } else {
+              const finalFrameIndex =
+                config.id ===
+                "boot"
+                  ? 0
+                  : images.length -
+                    1;
+
               const finalImage =
                 images[
-                  images.length -
-                    1
+                  finalFrameIndex
                 ];
 
               if (
                 finalImage
               ) {
                 currentFrameIndexRef.current =
-                  images.length -
-                  1;
+                  finalFrameIndex;
 
                 drawFrame(
                   finalImage
@@ -1831,6 +2867,22 @@ export default function CinematicSequence() {
 
         if (
           detail.id ===
+          "identity"
+        ) {
+          cinematicId =
+            "profile";
+        }
+
+        if (
+          detail.id ===
+          "capabilities"
+        ) {
+          cinematicId =
+            "capabilities";
+        }
+
+        if (
+          detail.id ===
           "security"
         ) {
           cinematicId =
@@ -1843,6 +2895,30 @@ export default function CinematicSequence() {
         ) {
           cinematicId =
             "archive";
+        }
+
+        if (
+          detail.id ===
+          "infrastructure"
+        ) {
+          cinematicId =
+            "infrastructure";
+        }
+
+        if (
+          detail.id ===
+          "search-performance"
+        ) {
+          cinematicId =
+            "search";
+        }
+
+        if (
+          detail.id ===
+          "research"
+        ) {
+          cinematicId =
+            "research";
         }
 
         if (
@@ -2067,6 +3143,28 @@ export default function CinematicSequence() {
 
       {
         activeConfig?.variant ===
+          "profile" && (
+          <ProfileVisual
+            active={
+              cinematicActive
+            }
+          />
+        )
+      }
+
+      {
+        activeConfig?.variant ===
+          "capability" && (
+          <CapabilityVisual
+            active={
+              cinematicActive
+            }
+          />
+        )
+      }
+
+      {
+        activeConfig?.variant ===
           "scan" && (
           <SecurityVisual
             active={
@@ -2080,6 +3178,39 @@ export default function CinematicSequence() {
         activeConfig?.variant ===
           "records" && (
           <ArchiveVisual
+            active={
+              cinematicActive
+            }
+          />
+        )
+      }
+
+      {
+        activeConfig?.variant ===
+          "infrastructure" && (
+          <InfrastructureVisual
+            active={
+              cinematicActive
+            }
+          />
+        )
+      }
+
+      {
+        activeConfig?.variant ===
+          "search" && (
+          <SearchVisual
+            active={
+              cinematicActive
+            }
+          />
+        )
+      }
+
+      {
+        activeConfig?.variant ===
+          "intelligence" && (
+          <IntelligenceVisual
             active={
               cinematicActive
             }

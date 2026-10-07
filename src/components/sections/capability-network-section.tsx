@@ -489,12 +489,12 @@ export default function CapabilityNetworkSection() {
             <p
               className="
                 max-w-[570px]
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
 
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               Explore how application
@@ -656,13 +656,13 @@ export default function CapabilityNetworkSection() {
                       className="
                         mt-6
                         break-words
-                        text-[20px]
+                        text-[18px]
                         font-semibold
                         leading-tight
                         tracking-[-0.025em]
                         text-[#eef5f8]
 
-                        sm:text-[22px]
+                        sm:text-[20px]
                       "
                     >
                       {cluster.title}
@@ -951,7 +951,7 @@ export default function CapabilityNetworkSection() {
                 <p
                   className="
                     mt-3
-                    text-[18px]
+                    text-[17px]
                     font-semibold
                     leading-6
                     tracking-[0.08em]
@@ -1189,16 +1189,16 @@ export default function CapabilityNetworkSection() {
                 className="
                   mt-6
                   break-words
-                  text-[31px]
+                  text-[28px]
                   font-semibold
                   leading-[1.05]
                   tracking-[-0.04em]
                   text-[#eef5f8]
                   uppercase
 
-                  sm:text-[38px]
+                  sm:text-[32px]
 
-                  lg:text-[44px]
+                  lg:text-[36px]
                 "
               >
                 {activeData.title}

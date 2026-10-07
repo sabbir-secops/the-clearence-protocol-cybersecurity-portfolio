@@ -383,11 +383,11 @@ export default function OperatingPrincipleSection() {
             <p
               className="
                 max-w-[570px]
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               A digital product is
@@ -694,14 +694,14 @@ export default function OperatingPrincipleSection() {
                       relative
                       z-10
                       break-words
-                      text-[27px]
+                      text-[23px]
                       font-semibold
                       leading-tight
-                      tracking-[-0.035em]
+                      tracking-[-0.03em]
                       text-[#eef5f8]
                       uppercase
-                      sm:text-[30px]
-                      2xl:text-[25px]
+                      sm:text-[25px]
+                      2xl:text-[22px]
                     "
                   >
                     {stage.name}

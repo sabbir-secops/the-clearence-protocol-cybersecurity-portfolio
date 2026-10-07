@@ -674,9 +674,9 @@ function ConnectionCard({
         <h3
           className="
             mt-5
-            text-[22px]
+            text-[20px]
             font-semibold
-            tracking-[-0.025em]
+            tracking-[-0.02em]
             text-[#eef5f8]
           "
         >
@@ -1087,11 +1087,11 @@ export default function ContactSection() {
             <p
               className="
                 max-w-[570px]
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               Have a system to build,
@@ -1190,13 +1190,13 @@ export default function ContactSection() {
                 className="
                   mt-6
                   max-w-[520px]
-                  text-[32px]
+                  text-[28px]
                   font-semibold
-                  leading-[1.05]
-                  tracking-[-0.04em]
+                  leading-[1.08]
+                  tracking-[-0.035em]
                   text-[#eef5f8]
-                  sm:text-[38px]
-                  lg:text-[44px]
+                  sm:text-[32px]
+                  lg:text-[36px]
                 "
               >
                 Open a channel.
@@ -1205,10 +1205,10 @@ export default function ContactSection() {
                 className="
                   mt-5
                   max-w-[500px]
-                  text-[15px]
-                  leading-7
+                  text-[14px]
+                  leading-6
                   text-[#a8b4bd]
-                  sm:text-[16px]
+                  sm:text-[15px]
                 "
               >
                 Send project context,
@@ -1653,12 +1653,12 @@ export default function ContactSection() {
                 className="
                   mt-4
                   max-w-[650px]
-                  text-[22px]
+                  text-[20px]
                   font-medium
-                  leading-8
-                  tracking-[-0.02em]
+                  leading-7
+                  tracking-[-0.018em]
                   text-[#eef5f8]
-                  sm:text-[26px]
+                  sm:text-[22px]
                 "
               >
                 You reached the end of

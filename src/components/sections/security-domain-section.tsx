@@ -427,11 +427,11 @@ export default function SecurityDomainSection() {
             <p
               className="
                 max-w-[580px]
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               Security decisions begin
@@ -682,12 +682,12 @@ export default function SecurityDomainSection() {
                         className="
                           mt-6
                           break-words
-                          text-[20px]
+                          text-[18px]
                           font-semibold
                           leading-tight
                           tracking-[-0.025em]
                           text-[#eef5f8]
-                          sm:text-[22px]
+                          sm:text-[20px]
                         "
                       >
                         {layer.name}
@@ -1196,14 +1196,14 @@ export default function SecurityDomainSection() {
                 className="
                   mt-7
                   break-words
-                  text-[31px]
+                  text-[28px]
                   font-semibold
-                  leading-[1.05]
-                  tracking-[-0.04em]
+                  leading-[1.08]
+                  tracking-[-0.035em]
                   text-[#eef5f8]
                   uppercase
-                  sm:text-[38px]
-                  lg:text-[44px]
+                  sm:text-[32px]
+                  lg:text-[36px]
                 "
               >
                 {activeData.name}

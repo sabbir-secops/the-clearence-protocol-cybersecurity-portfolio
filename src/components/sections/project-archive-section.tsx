@@ -540,12 +540,12 @@ export default function ProjectArchiveSection() {
             <p
               className="
                 max-w-[580px]
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#a8b4bd]
 
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               Projects are where
@@ -872,12 +872,12 @@ export default function ProjectArchiveSection() {
                           <h3
                             className={`
                               break-words
-                              text-[21px]
+                              text-[19px]
                               font-semibold
                               leading-tight
                               tracking-[-0.025em]
 
-                              sm:text-[23px]
+                              sm:text-[21px]
 
                               ${
                                 restricted
@@ -1135,16 +1135,16 @@ export default function ProjectArchiveSection() {
                     className="
                       mt-4
                       break-words
-                      text-[36px]
+                      text-[30px]
                       font-semibold
                       leading-none
                       tracking-[-0.05em]
                       text-amber-100
                       uppercase
 
-                      sm:text-[46px]
+                      sm:text-[36px]
 
-                      lg:text-[56px]
+                      lg:text-[42px]
                     "
                   >
                     Classified
@@ -1380,9 +1380,9 @@ export default function ProjectArchiveSection() {
                   >
                     <p
                       className="
-                        text-[21px]
+                        text-[19px]
                         font-medium
-                        tracking-[-0.02em]
+                        tracking-[-0.018em]
                         text-[#eef5f8]
                       "
                     >
@@ -1426,15 +1426,15 @@ export default function ProjectArchiveSection() {
                     className="
                       mt-4
                       break-words
-                      text-[34px]
+                      text-[30px]
                       font-semibold
                       leading-[1]
                       tracking-[-0.045em]
                       text-[#eef5f8]
 
-                      sm:text-[42px]
+                      sm:text-[36px]
 
-                      lg:text-[50px]
+                      lg:text-[42px]
                     "
                   >
                     {activeData.name}

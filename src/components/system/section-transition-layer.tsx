@@ -48,6 +48,19 @@ const initialState: TransitionState = {
   rgb: "72, 215, 255",
 };
 
+const dedicatedClearances =
+  new Set([
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+  ]);
+
 export default function SectionTransitionLayer() {
   const rootRef =
     useRef<HTMLDivElement | null>(null);
@@ -201,6 +214,46 @@ export default function SectionTransitionLayer() {
         customEvent.detail;
 
       if (!detail) {
+        return;
+      }
+
+      if (
+        dedicatedClearances.has(
+          detail.clearance
+        )
+      ) {
+        const targets = [
+          rootRef.current,
+          sweepRef.current,
+          pulseRef.current,
+          leftRailRef.current,
+          rightRailRef.current,
+          labelRef.current,
+          ghostRef.current,
+          topSignalRef.current,
+          bottomSignalRef.current,
+        ].filter(
+          (
+            target
+          ): target is HTMLDivElement =>
+            target !== null
+        );
+
+        gsap.killTweensOf(
+          targets
+        );
+
+        if (
+          rootRef.current
+        ) {
+          gsap.set(
+            rootRef.current,
+            {
+              autoAlpha: 0,
+            }
+          );
+        }
+
         return;
       }
 

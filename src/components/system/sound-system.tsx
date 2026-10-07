@@ -634,7 +634,7 @@ export default function SoundSystem() {
 
 
 
-    useRef(false);
+    useRef(true);
 
 
 
@@ -2437,7 +2437,7 @@ export default function SoundSystem() {
 
 
 
-      stored === "on";
+      stored !== "off";
 
 
 

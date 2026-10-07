@@ -395,11 +395,11 @@ export default function ClassifiedSection() {
             <p
               className="
                 max-w-[580px]
-                text-[16px]
+                text-[15px]
                 leading-7
                 text-[#b9b2a8]
-                sm:text-[17px]
-                sm:leading-8
+                sm:text-[16px]
+                sm:leading-7
               "
             >
               One system remains
@@ -736,11 +736,11 @@ export default function ClassifiedSection() {
                     <p
                       className="
                         mt-2
-                        text-[29px]
+                        text-[26px]
                         font-semibold
-                        tracking-[-0.04em]
+                        tracking-[-0.035em]
                         text-amber-50
-                        sm:text-[34px]
+                        sm:text-[30px]
                       "
                     >
                       S-01
@@ -1132,7 +1132,7 @@ export default function ClassifiedSection() {
                     <p
                       className="
                         mt-3
-                        text-[18px]
+                        text-[17px]
                         font-medium
                         text-[#f0e8dd]
                       "
@@ -1254,11 +1254,11 @@ export default function ClassifiedSection() {
               >
                 <p
                   className="
-                    text-[23px]
+                    text-[20px]
                     font-medium
-                    tracking-[-0.025em]
+                    tracking-[-0.02em]
                     text-[#f0e8dd]
-                    sm:text-[27px]
+                    sm:text-[23px]
                   "
                 >
                   Something is being built.
