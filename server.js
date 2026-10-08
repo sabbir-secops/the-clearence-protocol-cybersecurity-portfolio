@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS Node.js entrypoint */
 const { spawn } = require("child_process");
 
 const port = process.env.PORT || 3000;

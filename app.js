@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS Node.js entrypoint */
 const http = require("http");
 const next = require("next");
 
