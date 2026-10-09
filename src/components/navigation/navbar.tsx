@@ -7,6 +7,7 @@ import {
 } from "react";
 import Image from "next/image";
 import wordmark from "../../app/wordmark.png";
+import { buildPublicUrl, copyPublicText, getClearanceHash } from "@/lib/public-links";
 type SectionItem = {
   id: string;
   number: string;
@@ -550,6 +551,62 @@ export default function Navbar() {
           !current
       );
     };
+  const navigateFromIndex =
+    (
+      section: SectionItem
+    ) => {
+      window.dispatchEvent(
+        new CustomEvent(
+          "system:micro-feedback",
+          {
+            detail: {
+              label: "NAVIGATION ROUTE",
+              message: `Clearance ${section.number} · ${section.label}`,
+              tone:
+                section.id === "classified"
+                  ? "amber"
+                  : "cyan",
+              duration: 1200,
+            },
+          }
+        )
+      );
+      closeMenu();
+    };
+  const copyActiveClearanceLink =
+    async () => {
+      const hash = getClearanceHash(activeData.id);
+      const url = buildPublicUrl("/", hash);
+      const copied = await copyPublicText(url);
+
+      window.dispatchEvent(
+        new CustomEvent("system:micro-feedback", {
+          detail: {
+            label: copied ? "SHAREABLE CLEARANCE" : "SHARE LINK",
+            message: copied
+              ? `${activeData.number} · ${activeData.label} link copied`
+              : "Link copy unavailable in this browser",
+            tone: copied
+              ? activeData.id === "classified"
+                ? "amber"
+                : "cyan"
+              : "amber",
+            duration: 1500,
+          },
+        })
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("system:a11y-announce", {
+          detail: {
+            message: copied
+              ? `${activeData.label} clearance link copied`
+              : "Clearance link could not be copied",
+          },
+        })
+      );
+    };
+
   const toggleSound =
     () => {
       if (
@@ -575,6 +632,30 @@ export default function Navbar() {
           window.dispatchEvent(
             new CustomEvent(
               "system:terminal-toggle"
+            )
+          );
+        }
+      );
+    };
+  const openRecruiterMode =
+    () => {
+      const restoreTarget =
+        menuOpen
+          ? menuTriggerRef.current
+          : document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+      restoreFocusRef.current =
+        false;
+      setMenuOpen(
+        false
+      );
+      window.requestAnimationFrame(
+        () => {
+          restoreTarget?.focus();
+          window.dispatchEvent(
+            new CustomEvent(
+              "system:recruiter-open"
             )
           );
         }
@@ -734,6 +815,44 @@ export default function Navbar() {
                 System | Online
               </span>
             </div>
+            <button
+              type="button"
+              onClick={
+                openRecruiterMode
+              }
+              aria-controls="recruiter-mode"
+              className="
+                group
+                hidden
+                min-h-[44px]
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-cyan-300/20
+                bg-cyan-300/[0.035]
+                px-3
+                transition
+                hover:border-cyan-300/40
+                hover:bg-cyan-300/[0.07]
+                xl:flex
+                xl:px-4
+              "
+            >
+              <span
+                className="
+                  font-mono
+                  text-[9px]
+                  font-medium
+                  tracking-[0.11em]
+                  text-cyan-100
+                  uppercase
+                  xl:text-[10px]
+                "
+              >
+                60s Brief
+              </span>
+            </button>
             <button
               type="button"
               onClick={
@@ -1290,8 +1409,10 @@ export default function Navbar() {
                         section.id
                       }
                       href={`#${section.id}`}
-                      onClick={
-                        closeMenu
+                      onClick={() =>
+                        navigateFromIndex(
+                          section
+                        )
                       }
                       aria-current={
                         active
@@ -1445,7 +1566,6 @@ export default function Navbar() {
               border-white/[0.08]
               py-4
               sm:py-5
-              lg:hidden
             "
           >
             <p className="system-label">
@@ -1456,8 +1576,67 @@ export default function Navbar() {
                 mt-3
                 grid
                 gap-2.5
+                sm:grid-cols-2
+                lg:grid-cols-3
               "
             >
+              <button
+                type="button"
+                onClick={
+                  openRecruiterMode
+                }
+                aria-controls="recruiter-mode"
+                className="
+                  flex
+                  min-h-[48px]
+                  w-full
+                  items-center
+                  justify-between
+                  rounded-[12px]
+                  border
+                  border-cyan-300/20
+                  bg-cyan-300/[0.035]
+                  px-3.5
+                  transition
+                  hover:border-cyan-300/35
+                  hover:bg-cyan-300/[0.07]
+                "
+              >
+                <span
+                  className="
+                    flex
+                    items-center
+                    gap-3
+                  "
+                >
+                  <span
+                    className="
+                      h-2
+                      w-2
+                      rounded-full
+                      bg-cyan-300
+                      shadow-[0_0_10px_rgba(72,215,255,0.6)]
+                    "
+                  />
+                  <span
+                    className="
+                      font-mono
+                      text-[10px]
+                      tracking-[0.12em]
+                      text-cyan-100
+                      uppercase
+                    "
+                  >
+                    60-Second Recruiter Mode
+                  </span>
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="text-cyan-200"
+                >
+                  →
+                </span>
+              </button>
               <button
                 type="button"
                 onClick={
@@ -1518,6 +1697,40 @@ export default function Navbar() {
                   "
                 >
                   Ctrl+K
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={copyActiveClearanceLink}
+                className="
+                  flex
+                  min-h-[48px]
+                  w-full
+                  items-center
+                  justify-between
+                  rounded-[12px]
+                  border
+                  border-white/[0.09]
+                  bg-white/[0.025]
+                  px-3.5
+                  transition
+                  hover:border-cyan-300/30
+                  hover:bg-cyan-300/[0.05]
+                  sm:col-span-2
+                  lg:col-span-1
+                "
+              >
+                <span className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="h-2 w-2 rounded-full border border-cyan-300/40 bg-cyan-300/[0.08]"
+                  />
+                  <span className="font-mono text-[10px] tracking-[0.12em] text-[#c4cdd2] uppercase">
+                    Copy Clearance Link
+                  </span>
+                </span>
+                <span aria-hidden="true" className="font-mono text-[11px] text-cyan-200">
+                  ↗
                 </span>
               </button>
             </div>

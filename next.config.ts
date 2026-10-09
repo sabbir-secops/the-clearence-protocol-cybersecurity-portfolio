@@ -18,7 +18,7 @@ const contentSecurityPolicy = [
       ? ""
       : " 'unsafe-eval'"
   }`,
-  `connect-src 'self' blob:${
+  `connect-src 'self' blob: https://formsubmit.co${
     isProduction
       ? ""
       : " ws: wss:"

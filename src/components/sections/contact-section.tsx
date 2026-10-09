@@ -24,6 +24,141 @@ type ContactApiResponse = {
   activationRequired?: boolean;
   message?: string;
 };
+
+type FormSubmitResponse = {
+  success?: boolean | string;
+  message?: string;
+};
+
+const FORM_SUBMIT_ENDPOINT = [
+  "https:",
+  "",
+  "formsubmit.co",
+  "ajax",
+  "contact@buildwithsabbir.com",
+].join("/");
+
+const FORM_PAGE_URL =
+  "https://buildwithsabbir.com/#contact";
+
+const isGatewayFailure = (
+  response: Response
+) =>
+  [502, 503, 504].includes(
+    response.status
+  ) &&
+  !(
+    response.headers
+      .get("content-type") ??
+    ""
+  ).includes(
+    "application/json"
+  );
+
+async function submitDirectToFormSubmit({
+  identity,
+  email,
+  message,
+  signal,
+}: {
+  identity: string;
+  email: string;
+  message: string;
+  signal: AbortSignal;
+}) {
+  const formBody =
+    new URLSearchParams();
+
+  formBody.set(
+    "name",
+    identity
+  );
+  formBody.set(
+    "email",
+    email
+  );
+  formBody.set(
+    "_replyto",
+    email
+  );
+  formBody.set(
+    "message",
+    message
+  );
+  formBody.set(
+    "_subject",
+    `Portfolio Contact | ${identity}`
+  );
+  formBody.set(
+    "_template",
+    "table"
+  );
+  formBody.set(
+    "_captcha",
+    "false"
+  );
+  formBody.set(
+    "_url",
+    FORM_PAGE_URL
+  );
+  formBody.set(
+    "source",
+    "buildwithsabbir.com"
+  );
+
+  const response =
+    await fetch(
+      FORM_SUBMIT_ENDPOINT,
+      {
+        method: "POST",
+        headers: {
+          Accept:
+            "application/json",
+          "Content-Type":
+            "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+        body:
+          formBody.toString(),
+        signal,
+        cache:
+          "no-store",
+      }
+    );
+
+  const rawText =
+    await response.text();
+
+  let result:
+    | FormSubmitResponse
+    | null =
+      null;
+
+  try {
+    result =
+      JSON.parse(
+        rawText
+      ) as
+        FormSubmitResponse;
+  } catch {
+    result =
+      null;
+  }
+
+  const rejected =
+    result?.success ===
+      false ||
+    result?.success ===
+      "false";
+
+  return {
+    ok:
+      response.ok &&
+      !rejected,
+    message:
+      result?.message ??
+      rawText.trim(),
+  };
+}
 type ChannelIconName =
   | "email"
   | "github"
@@ -753,6 +888,18 @@ function ConnectionCard({
           : undefined
       }
       aria-label={`Open ${channel.name}`}
+      onClick={() => {
+        window.dispatchEvent(
+          new CustomEvent("system:micro-feedback", {
+            detail: {
+              label: "CONNECTION ROUTE",
+              message: `Opening ${channel.name}`,
+              tone: "cyan",
+              duration: 1100,
+            },
+          })
+        );
+      }}
     >
       {content}
     </a>
@@ -902,6 +1049,14 @@ export default function ContactSection() {
         18000
       );
     try {
+      if (honey) {
+        form.reset();
+        setFormStatus(
+          "success"
+        );
+        return;
+      }
+
       const response =
         await fetch(
           "/api/contact",
@@ -927,26 +1082,83 @@ export default function ContactSection() {
               controller.signal,
           }
         );
+
+      const contentType =
+        response.headers.get(
+          "content-type"
+        ) ?? "";
+
       const result =
-        await response
-          .json()
-          .catch(
-            () => null
-          ) as
-          | ContactApiResponse
-          | null;
+        contentType.includes(
+          "application/json"
+        )
+          ? await response
+              .json()
+              .catch(
+                () => null
+              ) as
+              | ContactApiResponse
+              | null
+          : null;
+
       if (
+        isGatewayFailure(
+          response
+        )
+      ) {
+        const fallback =
+          await submitDirectToFormSubmit(
+            {
+              identity,
+              email,
+              message,
+              signal:
+                controller.signal,
+            }
+          );
+
+        if (!fallback.ok) {
+          const activationRequired =
+            /activat|confirm/i.test(
+              fallback.message
+            );
+
+          setFormStatus(
+            activationRequired
+              ? "activation"
+              : "error"
+          );
+
+          window.dispatchEvent(
+            new CustomEvent(
+              "system:a11y-announce",
+              {
+                detail: {
+                  message:
+                    activationRequired
+                      ? "The contact endpoint is awaiting activation. Please use the email channel in the meantime."
+                      : fallback.message ||
+                        "Message transmission failed. Please retry.",
+                },
+              }
+            )
+          );
+          return;
+        }
+      } else if (
         !response.ok ||
         !result?.success
       ) {
         const activationRequired =
           result?.activationRequired ===
           true;
+
         setFormStatus(
           activationRequired
             ? "activation"
             : "error"
         );
+
         window.dispatchEvent(
           new CustomEvent(
             "system:a11y-announce",
@@ -963,6 +1175,7 @@ export default function ContactSection() {
         );
         return;
       }
+
       form.reset();
       setFormStatus(
         "success"

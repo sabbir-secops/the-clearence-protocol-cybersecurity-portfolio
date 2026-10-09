@@ -8,6 +8,9 @@ import {
   useState,
 } from "react";
 
+import ClearanceEvidencePanel from "@/components/evidence/clearance-evidence-panel";
+import { infrastructureEvidenceRefs } from "@/data/clearance-evidence";
+
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -1184,7 +1187,7 @@ export default function InfrastructureSection() {
                 </p>
 
                 <span className="tiny-mono">
-                  Technical Layer | Active
+                  Signals | Declared
                 </span>
               </div>
 
@@ -1274,6 +1277,12 @@ export default function InfrastructureSection() {
             </div>
           </div>
         </div>
+
+        <ClearanceEvidencePanel
+          refs={infrastructureEvidenceRefs[activeData.id] ?? []}
+          context={`Public case records connected to ${activeData.name}. Architecture signals remain separate from disclosed evidence.`}
+          className="mt-5"
+        />
 
         <div
           className="

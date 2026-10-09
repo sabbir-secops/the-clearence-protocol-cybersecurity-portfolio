@@ -10,12 +10,15 @@ import Navbar from "@/components/navigation/navbar";
 import AccessibilityController from "@/components/system/accessibility-controller";
 import CinematicSequence from "@/components/system/cinematic-sequence";
 import GlobalTerminal from "@/components/system/global-terminal";
+import HomeDeepLinkController from "@/components/system/home-deep-link-controller";
 import PerformanceController from "@/components/system/performance-controller";
 import PersistentSystemCore from "@/components/system/persistent-system-core";
+import RecruiterMode from "@/components/system/recruiter-mode";
 import ResponsiveQa from "@/components/system/responsive-qa";
 import SectionTransitionLayer from "@/components/system/section-transition-layer";
 import SoundSystem from "@/components/system/sound-system";
 import SystemEnvironment from "@/components/system/system-environment";
+import SystemAcknowledgement from "@/components/system/system-acknowledgement";
 
 import BootScreen from "@/components/sections/boot-screen";
 import HeroSection from "@/components/sections/hero-section";
@@ -128,11 +131,21 @@ export default function HomeExperience() {
         }
       />
 
+      {systemEntered && (
+        <SystemAcknowledgement />
+      )}
+
       <SoundSystem />
 
       <CinematicSequence />
 
       <GlobalTerminal
+        enabled={
+          systemEntered
+        }
+      />
+
+      <HomeDeepLinkController
         enabled={
           systemEntered
         }
@@ -145,6 +158,12 @@ export default function HomeExperience() {
       />
 
       <PersistentSystemCore
+        enabled={
+          systemEntered
+        }
+      />
+
+      <RecruiterMode
         enabled={
           systemEntered
         }

@@ -1,6 +1,5 @@
-import type {
-  CaseStudy,
-} from "./types";
+import { getProjectEvidence } from "../clearance-evidence";
+import type { CaseStudy } from "./types";
 
 export const leemeoCaseStudy: CaseStudy = {
   slug: "leemeo",
@@ -132,45 +131,7 @@ export const leemeoCaseStudy: CaseStudy = {
         "The system direction remains easier to evolve.",
     },
   ],
-  evidence: [
-    {
-      title: "Systems Thinking Model",
-      type: "Decision Framework",
-      classification: "PUBLIC",
-      summary:
-        "The case study exposes the relationship between operations, product and technical execution.",
-      details: [
-        "Operational context",
-        "Product need",
-        "Technical direction",
-        "Feedback",
-      ],
-    },
-    {
-      title: "Architecture Notes",
-      type: "Technical Documentation",
-      classification: "SANITIZED",
-      summary:
-        "Only public technical framing is shown. Internal business details remain outside the case file.",
-      details: [
-        "System relationships",
-        "Decision context",
-        "Technical direction",
-      ],
-    },
-    {
-      title: "Operational Outcomes",
-      type: "Future Evidence",
-      classification: "PLANNED",
-      summary:
-        "Additional evidence can be added when specific outcomes are suitable for public disclosure.",
-      details: [
-        "Process improvements",
-        "System changes",
-        "Product decisions",
-      ],
-    },
-  ],
+  evidence: getProjectEvidence("leemeo"),
   stack: [
     {
       layer: "Product",

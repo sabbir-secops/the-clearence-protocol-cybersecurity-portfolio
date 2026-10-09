@@ -1,6 +1,5 @@
-import type {
-  CaseStudy,
-} from "./types";
+import { getProjectEvidence } from "../clearance-evidence";
+import type { CaseStudy } from "./types";
 
 export const hostsecualCaseStudy: CaseStudy = {
   slug: "hostsecual",
@@ -162,60 +161,7 @@ export const hostsecualCaseStudy: CaseStudy = {
         "The case study can show engineering depth while preserving operational discretion.",
     },
   ],
-  evidence: [
-    {
-      title: "Infrastructure Layer Map",
-      type: "Architecture",
-      classification: "SANITIZED",
-      summary:
-        "A public representation of the DNS, edge, TLS, web server and host relationships.",
-      details: [
-        "DNS",
-        "Cloudflare",
-        "TLS",
-        "NGINX or Apache",
-        "Linux host",
-      ],
-    },
-    {
-      title: "Server Environment Signals",
-      type: "Technical Surface",
-      classification: "PUBLIC",
-      summary:
-        "The archive exposes the infrastructure technologies that define the current technical focus.",
-      details: [
-        "Linux",
-        "VPS",
-        "NGINX",
-        "Apache",
-        "Server Security",
-      ],
-    },
-    {
-      title: "Transport and Naming",
-      type: "Delivery Layer",
-      classification: "PUBLIC",
-      summary:
-        "DNS and SSL or TLS are treated as part of reliable service delivery.",
-      details: [
-        "DNS routing",
-        "TLS transport",
-        "Public service delivery",
-      ],
-    },
-    {
-      title: "Operational Evidence",
-      type: "Future Case Material",
-      classification: "PLANNED",
-      summary:
-        "Deeper configuration examples can be added when they can be safely sanitized for public disclosure.",
-      details: [
-        "Configuration patterns",
-        "Performance observations",
-        "Hardening notes",
-      ],
-    },
-  ],
+  evidence: getProjectEvidence("hostsecual"),
   stack: [
     {
       layer: "Host",

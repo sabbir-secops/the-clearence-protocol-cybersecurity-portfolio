@@ -1,6 +1,5 @@
-import type {
-  CaseStudy,
-} from "./types";
+import { getProjectEvidence } from "../clearance-evidence";
+import type { CaseStudy } from "./types";
 
 export const softparallaxCaseStudy: CaseStudy = {
   slug: "softparallax",
@@ -150,60 +149,7 @@ export const softparallaxCaseStudy: CaseStudy = {
         "The page remains useful to people while becoming easier for machines to interpret.",
     },
   ],
-  evidence: [
-    {
-      title: "Metadata Architecture",
-      type: "Search Configuration",
-      classification: "PUBLIC",
-      summary:
-        "Titles, descriptions, canonicals and social metadata are treated as part of the page architecture.",
-      details: [
-        "Title strategy",
-        "Description",
-        "Canonical",
-        "Open Graph",
-      ],
-    },
-    {
-      title: "Structured Data",
-      type: "Machine Readable Context",
-      classification: "TECHNICAL",
-      summary:
-        "Structured data is designed around real page entities and visible content.",
-      details: [
-        "Person",
-        "WebSite",
-        "ProfilePage",
-        "Entity relationships",
-      ],
-    },
-    {
-      title: "Crawl Surface",
-      type: "Technical SEO",
-      classification: "PUBLIC",
-      summary:
-        "Robots and sitemap behavior are part of the deployment checklist.",
-      details: [
-        "robots.txt",
-        "sitemap.xml",
-        "Canonical URLs",
-        "Public route coverage",
-      ],
-    },
-    {
-      title: "Performance Evidence",
-      type: "Measurement",
-      classification: "PLANNED",
-      summary:
-        "PageSpeed and Core Web Vitals measurements can be attached after final production deployment.",
-      details: [
-        "LCP",
-        "INP",
-        "CLS",
-        "Production PageSpeed",
-      ],
-    },
-  ],
+  evidence: getProjectEvidence("softparallax"),
   stack: [
     {
       layer: "Web",

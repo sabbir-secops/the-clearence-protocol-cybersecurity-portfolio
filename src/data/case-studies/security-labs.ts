@@ -1,6 +1,10 @@
-import type {
-  CaseStudy,
-} from "./types";
+import { getProjectEvidence } from "../clearance-evidence";
+import {
+  securityLabArchitectureNodes,
+  securityLabControls,
+  securityLabWorkflow,
+} from "../security-lab-public";
+import type { CaseStudy } from "./types";
 
 export const securityLabsCaseStudy: CaseStudy = {
   slug: "security-labs",
@@ -55,78 +59,22 @@ export const securityLabsCaseStudy: CaseStudy = {
       "Organize security research around the attack surface.",
     intro:
       "The lab architecture is a methodology rather than a production network. It shows how investigation moves from context into evidence.",
-    flow: [
-      "Target Context",
-      "Recon",
-      "Attack Surface",
-      "Testing",
-      "Validation",
-      "Mapping",
-      "Risk Context",
-      "Reporting",
-    ],
-    nodes: [
-      {
-        label: "Web",
-        detail:
-          "Application behavior, authentication, authorization and business logic remain key assessment surfaces.",
-      },
-      {
-        label: "API",
-        detail:
-          "Endpoints, identity boundaries and access control require direct testing.",
-      },
-      {
-        label: "Mobile",
-        detail:
-          "Android packages, storage, permissions and WebView behavior create a different analysis surface.",
-      },
-      {
-        label: "Tooling",
-        detail:
-          "Burp Suite and MobSF support investigation but do not replace validation.",
-      },
-      {
-        label: "CWE",
-        detail:
-          "Weakness mapping provides consistent technical vocabulary for findings.",
-      },
-      {
-        label: "Reporting",
-        detail:
-          "Evidence is translated into a form that can support remediation and defensive decisions.",
-      },
-    ],
+    flow: securityLabWorkflow.map((step) => step.label),
+    nodes: securityLabArchitectureNodes,
   },
   security: {
     headline:
       "Research is controlled by scope and evidence.",
     intro:
       "The public lab model is built around authorized or self controlled testing contexts. The portfolio documents methodology without publishing harmful target specific detail.",
-    rules: [
-      "Define scope before testing.",
-      "Do not treat automated output as a confirmed vulnerability.",
-      "Validate behavior before documenting a finding.",
-      "Separate evidence from assumptions.",
-      "Map technical weaknesses using established terminology where useful.",
-      "Keep private target details and credentials out of public case material.",
-    ],
+    rules: securityLabControls,
   },
   workflow: {
     headline:
       "Move from understanding to validation before reporting.",
     intro:
       "The workflow is deliberately evidence driven. Each stage should answer a technical question before the next stage adds more interpretation.",
-    steps: [
-      "Understand Target",
-      "Reconnaissance",
-      "Map Attack Surface",
-      "Test Behavior",
-      "Validate Finding",
-      "Map CWE or Framework",
-      "Add Risk Context",
-      "Report",
-    ],
+    steps: securityLabWorkflow.map((step) => step.workflowLabel),
   },
   decisions: [
     {
@@ -166,76 +114,7 @@ export const securityLabsCaseStudy: CaseStudy = {
         "Evidence can be related to recognized weakness and security categories.",
     },
   ],
-  evidence: [
-    {
-      title: "Web Application Assessment Flow",
-      type: "Methodology",
-      classification: "PUBLIC",
-      summary:
-        "A sanitized workflow for moving from reconnaissance into validated application findings.",
-      details: [
-        "Attack surface",
-        "Authentication",
-        "Authorization",
-        "Business logic",
-        "Validation",
-      ],
-    },
-    {
-      title: "API Security Surface",
-      type: "Assessment Area",
-      classification: "TECHNICAL",
-      summary:
-        "API testing focuses on endpoint behavior and access boundaries rather than only response codes.",
-      details: [
-        "Authentication",
-        "Authorization",
-        "Access control",
-        "Request behavior",
-      ],
-    },
-    {
-      title: "Android Analysis",
-      type: "Mobile Security",
-      classification: "TECHNICAL",
-      summary:
-        "Mobile research uses static analysis and mobile security concepts to inspect application packages.",
-      details: [
-        "MobSF",
-        "APK analysis",
-        "OWASP MASVS",
-        "WebView security",
-        "CWE mapping",
-      ],
-    },
-    {
-      title: "Testing Tooling",
-      type: "Research Tooling",
-      classification: "PUBLIC",
-      summary:
-        "Tools are documented as part of the workflow, not as proof of skill by themselves.",
-      details: [
-        "Burp Suite",
-        "MobSF",
-        "OWASP references",
-        "CWE",
-      ],
-    },
-    {
-      title: "Finding Report",
-      type: "Evidence Model",
-      classification: "PLANNED",
-      summary:
-        "Future public lab entries can include fully sanitized example findings and remediation context.",
-      details: [
-        "Finding",
-        "Evidence",
-        "CWE context",
-        "Impact",
-        "Remediation",
-      ],
-    },
-  ],
+  evidence: getProjectEvidence("security-labs"),
   stack: [
     {
       layer: "Web Testing",

@@ -8,6 +8,9 @@ import {
   useState,
 } from "react";
 
+import ClearanceEvidencePanel from "@/components/evidence/clearance-evidence-panel";
+import { capabilityEvidenceRefs } from "@/data/clearance-evidence";
+
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -1418,6 +1421,12 @@ export default function CapabilityNetworkSection() {
             </div>
           </div>
         </div>
+
+        <ClearanceEvidencePanel
+          refs={capabilityEvidenceRefs[activeData.id] ?? []}
+          context={`Public case records connected to ${activeData.title}. Capability labels are not treated as metrics or proof by themselves.`}
+          className="mt-5"
+        />
 
         <div
           className="

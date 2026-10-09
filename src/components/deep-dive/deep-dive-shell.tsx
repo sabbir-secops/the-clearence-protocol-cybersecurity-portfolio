@@ -2,6 +2,9 @@ import Link from "next/link";
 
 import ActiveCaseNav from "@/components/deep-dive/active-case-nav";
 import CaseStructuredData from "@/components/deep-dive/case-structured-data";
+import VerifiedProjectEvidence from "@/components/evidence/verified-project-evidence";
+
+import { isClearanceEvidenceProjectSlug } from "@/data/clearance-evidence";
 
 import type {
   CaseStudy,
@@ -292,9 +295,12 @@ function ClassificationBadge({
 }: {
   value: string;
 }) {
-  const warning =
-    value === "SANITIZED" ||
-    value === "PLANNED";
+  const classificationClass =
+    value === "PLANNED"
+      ? "border-white/[0.12] bg-white/[0.03] text-[#8f9ca5]"
+      : value === "SANITIZED"
+        ? "border-amber-300/25 bg-amber-300/[0.05] text-amber-200"
+        : "border-cyan-300/20 bg-cyan-300/[0.045] text-cyan-200";
 
   return (
     <span
@@ -309,12 +315,7 @@ function ClassificationBadge({
         font-semibold
         tracking-[0.11em]
         uppercase
-
-        ${
-          warning
-            ? "border-amber-300/25 bg-amber-300/[0.05] text-amber-200"
-            : "border-cyan-300/20 bg-cyan-300/[0.045] text-cyan-200"
-        }
+        ${classificationClass}
       `}
     >
       {value}
@@ -1860,6 +1861,13 @@ export default function DeepDiveShell({
               label="Evidence"
               title="Inspect what can be disclosed."
             />
+
+            {isClearanceEvidenceProjectSlug(caseStudy.slug) ? (
+              <VerifiedProjectEvidence
+                project={caseStudy.slug}
+                className="mb-6"
+              />
+            ) : null}
 
             <div
               className="

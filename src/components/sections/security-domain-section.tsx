@@ -8,6 +8,10 @@ import {
   useState,
 } from "react";
 
+import ClearanceEvidencePanel from "@/components/evidence/clearance-evidence-panel";
+import SecurityLabSnapshot from "@/components/security/security-lab-snapshot";
+import { securityEvidenceRefs } from "@/data/clearance-evidence";
+
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -1284,7 +1288,7 @@ export default function SecurityDomainSection() {
                 </p>
 
                 <span className="tiny-mono">
-                  Evidence Layer
+                  Signals | Declared
                 </span>
               </div>
 
@@ -1372,6 +1376,14 @@ export default function SecurityDomainSection() {
             </div>
           </div>
         </div>
+
+        <SecurityLabSnapshot />
+
+        <ClearanceEvidencePanel
+          refs={securityEvidenceRefs[activeData.id] ?? []}
+          context={`Public case records connected to ${activeData.name}. Missing public case evidence is shown explicitly rather than inferred.`}
+          className="mt-5"
+        />
 
         <div
           className="

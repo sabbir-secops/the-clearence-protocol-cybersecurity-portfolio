@@ -10,6 +10,18 @@ import {
 
 import Link from "next/link";
 
+import { buildPublicUrl, copyPublicText } from "@/lib/public-links";
+
+import ClearanceEvidencePanel from "@/components/evidence/clearance-evidence-panel";
+import EvolutionReactor from "@/components/evidence/evolution-reactor";
+import EvolutionSignalSpine from "@/components/evidence/evolution-signal-spine";
+import SystemEvolutionLog from "@/components/evidence/system-evolution-log";
+import VerifiedProjectEvidence from "@/components/evidence/verified-project-evidence";
+import {
+  getProjectEvidenceDossier,
+  type ClearanceEvidenceRef,
+} from "@/data/clearance-evidence";
+
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -89,7 +101,8 @@ const projects: ProjectNode[] = [
       "Flutter",
       "Dart",
       "Riverpod",
-      "Firebase",
+      "AWS",
+      "AWS Amplify",
       "RBAC",
       "API Systems",
       "Multi Tenant Thinking",
@@ -203,6 +216,16 @@ const projects: ProjectNode[] = [
   },
 ];
 
+const projectEvidenceRefs: Partial<
+  Record<ProjectKey, ClearanceEvidenceRef[]>
+> = {
+  hostsecual: [{ project: "hostsecual" }],
+  aged: [{ project: "aged" }],
+  leemeo: [{ project: "leemeo" }],
+  softparallax: [{ project: "softparallax" }],
+  "security-labs": [{ project: "security-labs" }],
+};
+
 function getProject(
   id: ProjectKey
 ): ProjectNode {
@@ -249,6 +272,16 @@ export default function ProjectArchiveSection() {
         ),
       [activeProject]
     );
+
+  const activeEvidenceProject = projectEvidenceRefs[activeData.id]?.[0]?.project;
+
+  const activeEvidenceDossier = useMemo(
+    () =>
+      activeEvidenceProject
+        ? getProjectEvidenceDossier(activeEvidenceProject)
+        : undefined,
+    [activeEvidenceProject]
+  );
 
   useEffect(() => {
     window.dispatchEvent(
@@ -380,6 +413,36 @@ export default function ProjectArchiveSection() {
     }
   };
 
+  const copyCaseLink = async () => {
+    if (!activeData.slug || activeData.classified) return;
+
+    const url = buildPublicUrl(`/archive/${activeData.slug}`);
+    const copied = await copyPublicText(url);
+
+    window.dispatchEvent(
+      new CustomEvent("system:micro-feedback", {
+        detail: {
+          label: copied ? "CASE LINK" : "SHARE LINK",
+          message: copied
+            ? `${activeData.code} · public case link copied`
+            : "Link copy unavailable in this browser",
+          tone: copied ? "cyan" : "amber",
+          duration: 1450,
+        },
+      })
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("system:a11y-announce", {
+        detail: {
+          message: copied
+            ? `${activeData.code} public case link copied`
+            : "Public case link could not be copied",
+        },
+      })
+    );
+  };
+
   const attemptClassifiedAccess =
     () => {
       if (decrypting) {
@@ -399,6 +462,17 @@ export default function ProjectArchiveSection() {
 
       setDecrypting(true);
       setPartialSignals([]);
+
+      window.dispatchEvent(
+        new CustomEvent("system:micro-feedback", {
+          detail: {
+            label: "RESTRICTED SIGNAL",
+            message: "S-01 · partial public signal only",
+            tone: "amber",
+            duration: 1600,
+          },
+        })
+      );
 
       const signals = [
         "INTELLIGENCE",
@@ -634,10 +708,11 @@ export default function ProjectArchiveSection() {
             2xl:items-start
           "
         >
-          <div
-            className="
-              archive-grid
-              relative
+          <div className="min-w-0 2xl:flex 2xl:self-stretch 2xl:flex-col">
+            <div
+              className="
+                archive-grid
+                relative
               min-w-0
               overflow-hidden
               rounded-[24px]
@@ -982,6 +1057,16 @@ export default function ProjectArchiveSection() {
                 Archive | Synchronized
               </span>
             </div>
+            </div>
+
+            {!activeData.classified && activeEvidenceProject ? (
+              <>
+                <div className="mt-5 hidden 2xl:sticky 2xl:top-[92px] 2xl:block">
+                  <EvolutionReactor project={activeEvidenceProject} />
+                </div>
+                <EvolutionSignalSpine project={activeEvidenceProject} />
+              </>
+            ) : null}
           </div>
 
           <aside
@@ -1542,7 +1627,7 @@ export default function ProjectArchiveSection() {
                       </p>
 
                       <span className="tiny-mono">
-                        Evidence | Active
+                        Signals | Declared
                       </span>
                     </div>
 
@@ -1618,6 +1703,29 @@ export default function ProjectArchiveSection() {
                     </div>
                   </div>
 
+                  {!activeData.classified ? (
+                    <>
+                      {activeEvidenceProject ? (
+                        <VerifiedProjectEvidence
+                          project={activeEvidenceProject}
+                          className="mt-8"
+                          compact
+                        />
+                      ) : null}
+
+                      <ClearanceEvidencePanel
+                        refs={projectEvidenceRefs[activeData.id] ?? []}
+                        context={`Disclosed case records for ${activeData.code}. Planned records remain visible but are excluded from current evidence.`}
+                        className="mt-4"
+                        dossier={activeEvidenceDossier}
+                      />
+
+                      {activeEvidenceProject ? (
+                        <SystemEvolutionLog project={activeEvidenceProject} />
+                      ) : null}
+                    </>
+                  ) : null}
+
                   <div
                     className="
                       mt-8
@@ -1664,28 +1772,57 @@ export default function ProjectArchiveSection() {
                       </div>
 
                       {activeData.slug ? (
-                        <Link
-                          href={`/archive/${activeData.slug}`}
-                          className="
-                            secondary-btn
-                            w-full
-                            outline-none
-                            focus-visible:ring-2
-                            focus-visible:ring-cyan-300/70
-                            focus-visible:ring-offset-2
-                            focus-visible:ring-offset-[#0b1016]
-
-                            sm:w-auto
-                          "
-                        >
-                          Enter Deep Dive
-                          <span
-                            aria-hidden="true"
-                            className="ml-2"
+                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                          <button
+                            type="button"
+                            onClick={copyCaseLink}
+                            className="
+                              secondary-btn
+                              w-full
+                              outline-none
+                              focus-visible:ring-2
+                              focus-visible:ring-cyan-300/70
+                              focus-visible:ring-offset-2
+                              focus-visible:ring-offset-[#0b1016]
+                              sm:w-auto
+                            "
                           >
-                            →
-                          </span>
-                        </Link>
+                            Copy Case Link
+                            <span aria-hidden="true" className="ml-2">
+                              ↗
+                            </span>
+                          </button>
+                          <Link
+                            href={`/archive/${activeData.slug}`}
+                            onClick={() => {
+                              window.dispatchEvent(
+                                new CustomEvent("system:micro-feedback", {
+                                  detail: {
+                                    label: "CASE FILE",
+                                    message: `${activeData.code} · opening technical record`,
+                                    tone: "cyan",
+                                    duration: 1100,
+                                  },
+                                })
+                              );
+                            }}
+                            className="
+                              secondary-btn
+                              w-full
+                              outline-none
+                              focus-visible:ring-2
+                              focus-visible:ring-cyan-300/70
+                              focus-visible:ring-offset-2
+                              focus-visible:ring-offset-[#0b1016]
+                              sm:w-auto
+                            "
+                          >
+                            Enter Deep Dive
+                            <span aria-hidden="true" className="ml-2">
+                              →
+                            </span>
+                          </Link>
+                        </div>
                       ) : (
                         <span
                           className="

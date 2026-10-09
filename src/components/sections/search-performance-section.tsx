@@ -8,6 +8,9 @@ import {
   useState,
 } from "react";
 
+import ClearanceEvidencePanel from "@/components/evidence/clearance-evidence-panel";
+import { searchEvidenceRefs } from "@/data/clearance-evidence";
+
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -1184,7 +1187,7 @@ export default function SearchPerformanceSection() {
                 </p>
 
                 <span className="tiny-mono">
-                  Discoverability | Active
+                  Signals | Declared
                 </span>
               </div>
 
@@ -1274,6 +1277,12 @@ export default function SearchPerformanceSection() {
             </div>
           </div>
         </div>
+
+        <ClearanceEvidencePanel
+          refs={searchEvidenceRefs[activeData.id] ?? []}
+          context={`Public case records connected to ${activeData.name}. Planned measurements are visible as roadmap records and never counted as current evidence.`}
+          className="mt-5"
+        />
 
         <div
           className="

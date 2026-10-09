@@ -25,11 +25,19 @@ import {
   ScrollTrigger,
 } from "gsap/ScrollTrigger";
 
+type SystemMode =
+  | "public"
+  | "security"
+  | "infrastructure"
+  | "intelligence"
+  | "restricted"
+  | "connection";
+
 type SystemSectionDetail = {
   id: string;
   label: string;
   clearance: string;
-  mode: string;
+  mode: SystemMode;
   accent: string;
   rgb: string;
   energy: number;
@@ -188,6 +196,15 @@ type RealCoreModelProps = {
 };
 
 const SYSTEM_COUNT = 8;
+
+const SYSTEM_MODES: SystemMode[] = [
+  "public",
+  "security",
+  "infrastructure",
+  "intelligence",
+  "restricted",
+  "connection",
+];
 
 const MODEL_PATH =
   "/models/core/core-v1.glb";
@@ -1153,6 +1170,24 @@ function CoreSystem() {
   const activeSectionRef =
     useRef("hero");
 
+  const activeModeRef =
+    useRef<SystemMode>(
+      "public"
+    );
+
+  const modeBlendRef =
+    useRef<Record<
+      SystemMode,
+      number
+    >>({
+      public: 1,
+      security: 0,
+      infrastructure: 0,
+      intelligence: 0,
+      restricted: 0,
+      connection: 0,
+    });
+
   const identityFocusRef =
     useRef(0);
 
@@ -1738,6 +1773,15 @@ function CoreSystem() {
 
         activeSectionRef.current =
           detail.id;
+
+        if (
+          SYSTEM_MODES.includes(
+            detail.mode
+          )
+        ) {
+          activeModeRef.current =
+            detail.mode;
+        }
 
         targetAccentRef.current.set(
           detail.accent
@@ -2501,6 +2545,49 @@ function CoreSystem() {
 
       const activeSection =
         activeSectionRef.current;
+
+      const activeMode =
+        activeModeRef.current;
+
+      const modeBlend =
+        modeBlendRef.current;
+
+      SYSTEM_MODES.forEach(
+        (mode) => {
+          const target =
+            activeMode === mode
+              ? 1
+              : 0;
+
+          modeBlend[mode] =
+            reducedMotionRef.current
+              ? target
+              : smoothValue(
+                  modeBlend[mode],
+                  target,
+                  4.6,
+                  delta
+                );
+        }
+      );
+
+      const publicModeFocus =
+        modeBlend.public;
+
+      const securityModeFocus =
+        modeBlend.security;
+
+      const infrastructureModeFocus =
+        modeBlend.infrastructure;
+
+      const intelligenceModeFocus =
+        modeBlend.intelligence;
+
+      const restrictedModeFocus =
+        modeBlend.restricted;
+
+      const connectionModeFocus =
+        modeBlend.connection;
 
       const identityTarget =
         activeSection ===
@@ -3648,6 +3735,31 @@ function CoreSystem() {
             0.12
         )
         .lerp(
+          SECURITY_CYAN,
+          securityModeFocus *
+            0.16
+        )
+        .lerp(
+          INFRASTRUCTURE_BLUE,
+          infrastructureModeFocus *
+            0.14
+        )
+        .lerp(
+          INTELLIGENCE_VIOLET,
+          intelligenceModeFocus *
+            0.18
+        )
+        .lerp(
+          PRODUCT_WHITE,
+          connectionModeFocus *
+            0.1
+        )
+        .lerp(
+          RESTRICTED_AMBER,
+          restrictedModeFocus *
+            0.62
+        )
+        .lerp(
           RESTRICTED_AMBER,
           restricted *
             0.72
@@ -3708,10 +3820,24 @@ function CoreSystem() {
         handoff *
           0.015;
 
+      const modeScale =
+        1 +
+        securityModeFocus *
+          0.004 +
+        infrastructureModeFocus *
+          0.002 +
+        intelligenceModeFocus *
+          0.005 +
+        restrictedModeFocus *
+          0.008 -
+        connectionModeFocus *
+          0.002;
+
       const targetScale =
         baseScale *
         energyScale *
-        handoffScale;
+        handoffScale *
+        modeScale;
 
       const nextScale =
         smoothValue(
@@ -3844,6 +3970,16 @@ function CoreSystem() {
             (
               projectFocus *
                 0.04 +
+              securityModeFocus *
+                0.012 -
+              infrastructureModeFocus *
+                0.006 +
+              intelligenceModeFocus *
+                0.014 +
+              restrictedModeFocus *
+                0.028 -
+              connectionModeFocus *
+                0.008 +
               contactSubmittingFocus *
                 0.01 +
               contactSuccessFocus *
@@ -3972,6 +4108,8 @@ function CoreSystem() {
               0.1 +
             infrastructureFocus *
               0.075 +
+            infrastructureModeFocus *
+              0.03 +
             identityFocus *
               0.028 +
             logicInfrastructureFocus *
@@ -4334,6 +4472,8 @@ function CoreSystem() {
               0.17 +
             securityFocus *
               0.12 +
+            securityModeFocus *
+              0.03 +
             logicSecurityFocus *
               0.075 +
             capabilitySecurityFocus *
@@ -4380,6 +4520,8 @@ function CoreSystem() {
               0.115 +
             securityFocus *
               0.085 +
+            securityModeFocus *
+              0.02 +
             logicSecurityFocus *
               0.055 +
             capabilitySecurityFocus *
@@ -4488,6 +4630,8 @@ function CoreSystem() {
               0.11 +
             intelligenceFocus *
               0.1 +
+            intelligenceModeFocus *
+              0.028 +
             logicIntelligenceFocus *
               0.06 +
             capabilityIntelligenceFocus *
@@ -4526,6 +4670,8 @@ function CoreSystem() {
               0.15 +
             intelligenceFocus *
               0.1 +
+            intelligenceModeFocus *
+              0.022 +
             logicIntelligenceFocus *
               0.05 +
             capabilityIntelligenceFocus *
@@ -4631,6 +4777,10 @@ function CoreSystem() {
             0.022 +
             productActivation *
               0.07 +
+            publicModeFocus *
+              0.004 +
+            connectionModeFocus *
+              0.02 +
             pulse *
               0.03 +
             logicProductFocus *
@@ -4778,7 +4928,17 @@ function CoreSystem() {
           contactProductFocus *
             0.26 +
           contactSuccessFocus *
-            0.24;
+            0.24 +
+          securityModeFocus *
+            0.25 +
+          infrastructureModeFocus *
+            0.18 +
+          intelligenceModeFocus *
+            0.24 +
+          restrictedModeFocus *
+            0.5 +
+          connectionModeFocus *
+            0.32;
       }
     }
   );

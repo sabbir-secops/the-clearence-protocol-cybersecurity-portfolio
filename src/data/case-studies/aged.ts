@@ -1,6 +1,5 @@
-import type {
-  CaseStudy,
-} from "./types";
+import { getProjectEvidence } from "../clearance-evidence";
+import type { CaseStudy } from "./types";
 
 export const agedCaseStudy: CaseStudy = {
   slug: "aged",
@@ -170,87 +169,7 @@ export const agedCaseStudy: CaseStudy = {
         "The system preserves the operational sequence instead of leaving completion to memory.",
     },
   ],
-  evidence: [
-    {
-      title: "Attendance API Surface",
-      type: "Backend Contract",
-      classification: "TECHNICAL",
-      summary:
-        "The attendance lifecycle is represented through dedicated backend routes rather than UI only state.",
-      details: [
-        "POST /attendance/start-duty",
-        "POST /attendance/end-duty",
-        "GET /attendance/current",
-        "GET /attendance/history",
-      ],
-    },
-    {
-      title: "Tenant and Branch Permission Model",
-      type: "Authorization Model",
-      classification: "SANITIZED",
-      summary:
-        "The public case file exposes the scope model without publishing sensitive implementation detail.",
-      details: [
-        "Super Admin: system wide",
-        "Shop Owner: own shop and branches",
-        "Manager: assigned branch",
-        "Staff: assigned branch and role permissions",
-      ],
-    },
-    {
-      title: "Duty Workflow",
-      type: "Operational Flow",
-      classification: "PUBLIC",
-      summary:
-        "The duty lifecycle demonstrates how location, verification and reporting dependencies connect.",
-      details: [
-        "Branch geofence",
-        "Live photo verification",
-        "Role report dependency",
-        "Duty completion",
-      ],
-    },
-    {
-      title: "Release Builds",
-      type: "Build Evidence",
-      classification: "PUBLIC",
-      summary:
-        "The project has produced web and Android release build outputs during development.",
-      details: [
-        "Flutter web build",
-        "Android release APK",
-        "Responsive web interface",
-        "Mobile application flow",
-      ],
-    },
-    {
-      title: "Purchase to Finance Relationship",
-      type: "Data Relationship",
-      classification: "TECHNICAL",
-      summary:
-        "Purchase activity is designed to feed financial visibility instead of becoming an isolated module.",
-      details: [
-        "Branch purchase context",
-        "Owner notification",
-        "Purchase totals",
-        "Sales and cost comparison",
-      ],
-    },
-    {
-      title: "Future Integration Layer",
-      type: "Roadmap",
-      classification: "PLANNED",
-      summary:
-        "External operational integrations are being treated as system extensions rather than core authorization boundaries.",
-      details: [
-        "Foodics",
-        "Online ordering",
-        "Loyalty",
-        "POS",
-        "Delivery tracking",
-      ],
-    },
-  ],
+  evidence: getProjectEvidence("aged"),
   stack: [
     {
       layer: "Application",

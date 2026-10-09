@@ -13,8 +13,17 @@ type PersistentSystemCoreProps = {
   enabled: boolean;
 };
 
+type SystemMode =
+  | "public"
+  | "security"
+  | "infrastructure"
+  | "intelligence"
+  | "restricted"
+  | "connection";
+
 type SystemSectionDetail = {
   id: string;
+  mode?: SystemMode;
 };
 
 type ReducedMotionDetail = {
@@ -129,6 +138,13 @@ export default function PersistentSystemCore({
   );
 
   const [
+    activeMode,
+    setActiveMode,
+  ] = useState<SystemMode>(
+    "public"
+  );
+
+  const [
     reducedMotion,
     setReducedMotion,
   ] = useState(false);
@@ -237,6 +253,14 @@ export default function PersistentSystemCore({
         }
 
         setActiveId(id);
+
+        const mode =
+          customEvent.detail
+            ?.mode;
+
+        if (mode) {
+          setActiveMode(mode);
+        }
       };
 
     const handlePerformanceProfile =
@@ -493,10 +517,27 @@ export default function PersistentSystemCore({
         ? 0.84
         : 1;
 
+  const modeOpacity =
+    activeMode ===
+    "restricted"
+      ? 1
+      : activeMode ===
+          "security" ||
+          activeMode ===
+            "infrastructure" ||
+          activeMode ===
+            "intelligence"
+        ? 0.96
+        : activeMode ===
+            "connection"
+          ? 0.9
+          : 0.92;
+
   const ambientOpacity =
     ambient.opacity *
     performanceOpacity *
-    viewportOpacity;
+    viewportOpacity *
+    modeOpacity;
 
   const ambientWidth =
     compactViewport
@@ -547,6 +588,9 @@ export default function PersistentSystemCore({
         z-[7]
         overflow-hidden
       "
+      data-core-mode={
+        activeMode
+      }
       style={{
         opacity:
           enabled
@@ -602,13 +646,21 @@ export default function PersistentSystemCore({
                 transitionTimingFunction:
                   "cubic-bezier(0.22, 1, 0.36, 1)",
                 filter:
-                  activeId ===
-                  "classified"
+                  activeMode ===
+                  "restricted"
                     ? "saturate(1.12) brightness(0.92)"
-                    : activeId ===
-                        "research"
+                    : activeMode ===
+                        "intelligence"
                       ? "saturate(1.08) brightness(0.95)"
-                      : "saturate(0.9) brightness(0.86)",
+                      : activeMode ===
+                            "security" ||
+                          activeMode ===
+                            "infrastructure"
+                        ? "saturate(0.98) brightness(0.9)"
+                        : activeMode ===
+                            "connection"
+                          ? "saturate(0.94) brightness(0.9)"
+                          : "saturate(0.9) brightness(0.86)",
               }
         }
       >

@@ -6,6 +6,8 @@ import {
   useState,
 } from "react";
 
+import { buildPublicUrl, copyPublicText } from "@/lib/public-links";
+
 type CaseAccent =
   | "cyan"
   | "blue"
@@ -88,6 +90,8 @@ export default function ActiveCaseNav({
       initialId
     );
 
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
+
   const stripRef =
     useRef<HTMLDivElement | null>(
       null
@@ -97,6 +101,8 @@ export default function ActiveCaseNav({
     useRef<HTMLSpanElement | null>(
       null
     );
+
+  const copyResetRef = useRef<number | null>(null);
 
   const styles =
     accentClasses[
@@ -312,6 +318,30 @@ export default function ActiveCaseNav({
     activeId,
   ]);
 
+  useEffect(() => {
+    return () => {
+      if (copyResetRef.current !== null) {
+        window.clearTimeout(copyResetRef.current);
+      }
+    };
+  }, []);
+
+  const copyCurrentSectionLink = async () => {
+    const url = buildPublicUrl(window.location.pathname, `#${activeId}`);
+    const copied = await copyPublicText(url);
+
+    setCopyState(copied ? "copied" : "error");
+
+    if (copyResetRef.current !== null) {
+      window.clearTimeout(copyResetRef.current);
+    }
+
+    copyResetRef.current = window.setTimeout(() => {
+      setCopyState("idle");
+      copyResetRef.current = null;
+    }, 1500);
+  };
+
   return (
     <nav
       aria-label="Case file sections"
@@ -453,6 +483,64 @@ export default function ActiveCaseNav({
             }
           )}
         </div>
+
+        <span className="sr-only" aria-live="polite">
+          {copyState === "copied"
+            ? `${caseCode} ${activeId} section link copied`
+            : copyState === "error"
+              ? "Section link could not be copied"
+              : ""}
+        </span>
+
+        <button
+          type="button"
+          onClick={copyCurrentSectionLink}
+          aria-label={
+            copyState === "copied"
+              ? `${caseCode} ${activeId} link copied`
+              : copyState === "error"
+                ? `Could not copy ${caseCode} ${activeId} link`
+                : `Copy ${caseCode} ${activeId} section link`
+          }
+          className={`
+            inline-flex
+            min-h-[40px]
+            shrink-0
+            items-center
+            justify-center
+            gap-2
+            rounded-full
+            border
+            border-white/[0.10]
+            bg-white/[0.025]
+            px-3
+            font-mono
+            text-[9px]
+            font-semibold
+            tracking-[0.10em]
+            text-[#a8b4bd]
+            uppercase
+            outline-none
+            transition
+            hover:border-cyan-300/25
+            hover:bg-cyan-300/[0.045]
+            hover:text-cyan-100
+            focus-visible:ring-2
+            ${styles.ring}
+            motion-reduce:transition-none
+          `}
+        >
+          <span className="hidden sm:inline">
+            {copyState === "copied"
+              ? "Copied"
+              : copyState === "error"
+                ? "Copy Failed"
+                : "Copy Link"}
+          </span>
+          <span aria-hidden="true">
+            {copyState === "copied" ? "✓" : copyState === "error" ? "!" : "↗"}
+          </span>
+        </button>
       </div>
     </nav>
   );
